@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1091592162923",
+    "project_id": "to-do-smart-app",
+    "storage_bucket": "to-do-smart-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1091592162923:android:d400643e3bde70d7802b2e",
+        "android_client_info": {
+          "package_name": "com.example.smart_to_do_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1091592162923-58j9cmqhjsujn7vhkrunqhmlrn7kkcb6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCzRZ8VQXILRZoqPWO0A66p2O2k_OubZAQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1091592162923-58j9cmqhjsujn7vhkrunqhmlrn7kkcb6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
