@@ -163,7 +163,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Container(
               height: 180,
               decoration: BoxDecoration(
-                color: Colors.amber,
+                color: const Color.fromARGB(255, 255, 255, 255),
                 borderRadius: BorderRadius.all(Radius.circular(10)),
               ),
               child: Stack(
