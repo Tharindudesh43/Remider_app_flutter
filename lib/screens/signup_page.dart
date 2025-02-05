@@ -6,8 +6,6 @@ import 'package:smart_to_do_app/services/firebase_auth_service.dart';
 import 'package:smart_to_do_app/utilities/Validation.dart';
 import 'package:smart_to_do_app/widgets/custom_button.dart';
 import 'package:smart_to_do_app/widgets/custom_textfield.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});

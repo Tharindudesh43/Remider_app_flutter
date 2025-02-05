@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:smart_to_do_app/providers/todotask_provider.dart';
 import 'package:smart_to_do_app/screens/home_screen.dart';
 import 'package:smart_to_do_app/screens/login_page.dart';
+import 'package:smart_to_do_app/test.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -45,7 +46,7 @@ class _MyAppState extends State<MyApp> {
             } else if (snap.data == null) {
               return const LoginPage();
             } else {
-              return  HomeScreen();
+              return HomeScreen();
             }
           }),
     );

@@ -7,7 +7,8 @@ import 'package:smart_to_do_app/providers/todotask_provider.dart';
 import 'package:smart_to_do_app/services/firebase_service.dart';
 
 class ProfileCard {
-  Future<dynamic> DialogCard({required BuildContext contextxx}) {
+  Future<dynamic> DialogCard(
+      {required BuildContext contextxx, required String username}) {
     final ValueNotifier<bool> isLoadCardButton = ValueNotifier<bool>(false);
     return showDialog(
       context: contextxx,
@@ -18,7 +19,7 @@ class ProfileCard {
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           backgroundColor: const Color.fromARGB(255, 253, 235, 249),
           child: SizedBox(
-            width: 200,
+            width: 330, //200
             height: 250,
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -26,7 +27,7 @@ class ProfileCard {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Tharindu',
+                    username,
                     style: TextStyle(
                         fontSize: 25,
                         color: Colors.black,
@@ -64,19 +65,25 @@ class ProfileCard {
                         builder: (context, isLoading, _) {
                           return InkWell(
                             onTap: () {
-                              FirebaseAuth.instance.signOut();
                               Navigator.pushAndRemoveUntil(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => const MyApp()),
                                 (Route<dynamic> route) => false,
                               );
+                              FirebaseAuth.instance.signOut();
                               context
                                   .read<TodotaskProvider>()
                                   .clearcurrentuserTasks();
                               context
                                   .read<TodotaskProvider>()
                                   .clearcurrentusername();
+                              context
+                                  .read<TodotaskProvider>()
+                                  .clearcurrentuser_personal_Tasks();
+                              // context
+                              //     .read<TodotaskProvider>()
+                              //     .clear_level_of_complete();
                             },
                             child: Padding(
                               padding: const EdgeInsets.only(left: 0),
@@ -118,7 +125,26 @@ class ProfileCard {
                             ),
                           );
                         },
-                      )
+                      ),
+                      TextButton(
+                        style: TextButton.styleFrom(
+                            backgroundColor:
+                                const Color.fromARGB(255, 255, 3, 175)),
+                        child: const Text('Balance Tasks',
+                            style: TextStyle(
+                                color: Color.fromARGB(255, 255, 255, 255),
+                                fontSize: 15)),
+                        onPressed: () {
+                          FirebaseService
+                              .balance_comleted_tasks_with_existing_data();
+                           Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const MyApp()),
+                                (Route<dynamic> route) => false,
+                              );
+                        },
+                      ),
                     ],
                   ),
                 ],

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:smart_to_do_app/models/tototask_model.dart';
+import 'package:smart_to_do_app/providers/todotask_provider.dart';
 
 class FirebaseService {
   static Future<List<ToDoTask>> gettodotasks() async {
@@ -14,12 +15,12 @@ class FirebaseService {
 
       for (var ToDoTasksDoc in todotaskDocument.docs) {
         ToDoTasks.add(ToDoTask(
-          id: ToDoTasksDoc.id,
-          date: ToDoTasksDoc["date"],
-          description: ToDoTasksDoc["description"],
-          priority: ToDoTasksDoc["priority"],
-          title: ToDoTasksDoc["title"],
-        ));
+            id: ToDoTasksDoc.id,
+            date: ToDoTasksDoc["date"],
+            description: ToDoTasksDoc["description"],
+            priority: ToDoTasksDoc["priority"],
+            title: ToDoTasksDoc["title"],
+            tasktype: ToDoTasksDoc["tasktype"]));
       }
 
       print(" Find all todotasks : ${ToDoTasks[0].title}");
@@ -43,6 +44,7 @@ class FirebaseService {
         "email": email,
         "name": name,
         "mobilenumber": mobilenumber,
+        "level_of_complete": [0, 0]
       });
 
       print("user add to firestore");
@@ -53,12 +55,12 @@ class FirebaseService {
   }
 
 //add user added tasks into firestore
-  static Future<dynamic> addtodotask({
-    required String title,
-    required String description,
-    required String priority,
-    required DateTime date,
-  }) async {
+  static Future<dynamic> addtodotask(
+      {required String title,
+      required String description,
+      required String priority,
+      required DateTime date,
+      required String tasktype}) async {
     try {
       CollectionReference todotasksCollectionReference =
           FirebaseFirestore.instance.collection("to_do_tasks");
@@ -67,8 +69,11 @@ class FirebaseService {
         "title": title,
         "description": description,
         "priority": priority,
-        "date": date
+        "date": date,
+        "tasktype": tasktype
       });
+
+      //FirebaseFirestore.instance.collection("users").where(docref.id);
 
       print("Task added");
       return docref.id;
@@ -114,6 +119,18 @@ class FirebaseService {
             .update({'user_to_do_tasks': user_to_do_tasks}).then((val) {
           print("User TODO Task Added");
         });
+        if (document["level_of_complete"] != null) {
+          List<dynamic> level_of_complete = document["level_of_complete"];
+
+          int all_tasks = level_of_complete[1];
+          int completed_tasks = level_of_complete[0];
+
+          usersCollectionReference.doc(userDocId).update({
+            'level_of_complete': [completed_tasks, all_tasks + 1]
+          }).then((val) {
+            print("added task to level_of_complete");
+          });
+        }
       }
     } catch (e) {
       usersCollectionReference.doc(userDocId).update({
@@ -133,7 +150,175 @@ class FirebaseService {
       if (document["user_to_do_tasks"] != null) {
         List<dynamic> usertodotasks = await document["user_to_do_tasks"];
         print("Current User ToDo Tasks: $usertodotasks");
+
         return usertodotasks;
+      } else {
+        print("Current User ToDo Tasks: Empty");
+        return [];
+      }
+    } catch (e) {
+      return [];
+    }
+  }
+
+  static Future<List<dynamic>?> getCurrentUser_personal_todotasks() async {
+    final usersCollectionReference =
+        FirebaseFirestore.instance.collection("users");
+    final todotasksCollectionReference =
+        FirebaseFirestore.instance.collection("to_do_tasks");
+    final userDocId = await getCurrentUser();
+
+    List<dynamic> currentuser_personal_tasks = [];
+
+    var document = await usersCollectionReference.doc(userDocId).get();
+
+    try {
+      if (document["user_to_do_tasks"] != null) {
+        List<dynamic> usertodotasks = await document["user_to_do_tasks"];
+        print("Current User ToDo Tasks: $usertodotasks");
+
+        for (var todotask in usertodotasks) {
+          var documenttodotask =
+              await todotasksCollectionReference.doc(todotask).get();
+
+          if (documenttodotask["tasktype"] == "Personal") {
+            currentuser_personal_tasks.add(todotask);
+          }
+        }
+
+        print("Current user Personal Tasks: $currentuser_personal_tasks");
+        return currentuser_personal_tasks;
+      } else {
+        print("Current User ToDo Tasks: Empty");
+        return [];
+      }
+    } catch (e) {
+      return [];
+    }
+  }
+
+  static Future<List<dynamic>> get_level_of_complete() async {
+    final usersCollectionReference =
+        FirebaseFirestore.instance.collection("users");
+    final userDocId = await getCurrentUser();
+    var document = await usersCollectionReference.doc(userDocId).get();
+
+    List<dynamic> level_of_complete = [];
+
+    try {
+      if (document["level_of_complete"] != null) {
+        level_of_complete = await document["level_of_complete"];
+        print("Current User level_of_task_compleion: $level_of_complete");
+
+        return level_of_complete;
+      } else {
+        print("Current User ToDo Tasks: Empty");
+        return [];
+      }
+    } catch (e) {
+      return [];
+    }
+  }
+
+  static Future<List<dynamic>?> getCurrentUser_social_todotasks() async {
+    final usersCollectionReference =
+        FirebaseFirestore.instance.collection("users");
+    final todotasksCollectionReference =
+        FirebaseFirestore.instance.collection("to_do_tasks");
+    final userDocId = await getCurrentUser();
+
+    List<dynamic> currentuser_social_tasks = [];
+
+    var document = await usersCollectionReference.doc(userDocId).get();
+
+    try {
+      if (document["user_to_do_tasks"] != null) {
+        List<dynamic> usertodotasks = await document["user_to_do_tasks"];
+        print("Current User ToDo Tasks: $usertodotasks");
+
+        for (var todotask in usertodotasks) {
+          var documenttodotask =
+              await todotasksCollectionReference.doc(todotask).get();
+
+          if (documenttodotask["tasktype"] == "Social") {
+            currentuser_social_tasks.add(todotask);
+          }
+        }
+
+        print("Current user Social Tasks: $currentuser_social_tasks");
+        return currentuser_social_tasks;
+      } else {
+        print("Current User ToDo Tasks: Empty");
+        return [];
+      }
+    } catch (e) {
+      return [];
+    }
+  }
+
+  static Future<List<dynamic>?> getCurrentUser_health_todotasks() async {
+    final usersCollectionReference =
+        FirebaseFirestore.instance.collection("users");
+    final todotasksCollectionReference =
+        FirebaseFirestore.instance.collection("to_do_tasks");
+    final userDocId = await getCurrentUser();
+
+    List<dynamic> currentuser_health_tasks = [];
+
+    var document = await usersCollectionReference.doc(userDocId).get();
+
+    try {
+      if (document["user_to_do_tasks"] != null) {
+        List<dynamic> usertodotasks = await document["user_to_do_tasks"];
+        print("Current User ToDo Tasks: $usertodotasks");
+
+        for (var todotask in usertodotasks) {
+          var documenttodotask =
+              await todotasksCollectionReference.doc(todotask).get();
+
+          if (documenttodotask["tasktype"] == "Health") {
+            currentuser_health_tasks.add(todotask);
+          }
+        }
+
+        print("Current user Health Tasks: $currentuser_health_tasks");
+        return currentuser_health_tasks;
+      } else {
+        print("Current User ToDo Tasks: Empty");
+        return [];
+      }
+    } catch (e) {
+      return [];
+    }
+  }
+
+  static Future<List<dynamic>?> getCurrentUser_work_todotasks() async {
+    final usersCollectionReference =
+        FirebaseFirestore.instance.collection("users");
+    final todotasksCollectionReference =
+        FirebaseFirestore.instance.collection("to_do_tasks");
+    final userDocId = await getCurrentUser();
+
+    List<dynamic> currentuser_work_tasks = [];
+
+    var document = await usersCollectionReference.doc(userDocId).get();
+
+    try {
+      if (document["user_to_do_tasks"] != null) {
+        List<dynamic> usertodotasks = await document["user_to_do_tasks"];
+        print("Current User ToDo Tasks: $usertodotasks");
+
+        for (var todotask in usertodotasks) {
+          var documenttodotask =
+              await todotasksCollectionReference.doc(todotask).get();
+
+          if (documenttodotask["tasktype"] == "Work") {
+            currentuser_work_tasks.add(todotask);
+          }
+        }
+
+        print("Current user work Tasks: $currentuser_work_tasks");
+        return currentuser_work_tasks;
       } else {
         print("Current User ToDo Tasks: Empty");
         return [];
@@ -187,6 +372,7 @@ class FirebaseService {
     required String title,
     required String description,
     required String priority,
+    required String tasktype,
     required DateTime date,
   }) async {
     try {
@@ -198,9 +384,9 @@ class FirebaseService {
         'description': description,
         'priority': priority,
         'date': date,
+        'tasktype': tasktype
       });
       print("Task Updated success!");
-      return gettodotasks();
     } catch (e) {
       print("Error updating task: $e");
     }
@@ -234,5 +420,81 @@ class FirebaseService {
     var currentdisplayname = document["name"];
     print(currentdisplayname.toString());
     return currentdisplayname.toString();
+  }
+
+  static balance_comleted_tasks_with_existing_data() async {
+    CollectionReference usersCollectionReference =
+        FirebaseFirestore.instance.collection("users");
+
+    final userDocId = await getCurrentUser();
+
+    var document = await usersCollectionReference.doc(userDocId).get();
+    List<dynamic> current_tasks = document["user_to_do_tasks"];
+    List<dynamic> level_of_complete = document["level_of_complete"];
+
+    try {
+      int all_tasks = current_tasks.length;
+      int completed_tasks = 0;
+
+      usersCollectionReference.doc(userDocId).update({
+        'level_of_complete': [completed_tasks, all_tasks]
+      }).then((val) {
+        print("Update and balance level_of_complete");
+      });
+    } catch (e) {
+      print("Error balance while level of complete: $e");
+    }
+  }
+
+  static Future delete_level_of_complete() async {
+    CollectionReference usersCollectionReference =
+        FirebaseFirestore.instance.collection("users");
+
+    final userDocId = await getCurrentUser();
+
+    var document = await usersCollectionReference.doc(userDocId).get();
+
+    try {
+      if (document["level_of_complete"] != null) {
+        List<dynamic> level_of_complete = document["level_of_complete"];
+
+        int all_tasks = level_of_complete[1];
+        int completed_tasks = level_of_complete[0];
+
+        usersCollectionReference.doc(userDocId).update({
+          'level_of_complete': [completed_tasks, all_tasks - 1]
+        }).then((val) {
+          print("remved task to level_of_complete");
+        });
+      }
+    } catch (e) {
+      print("Error Remove while level of complete: $e");
+    }
+  }
+
+  static add_level_of_complete() async {
+    CollectionReference usersCollectionReference =
+        FirebaseFirestore.instance.collection("users");
+
+    final userDocId = await getCurrentUser();
+
+    var document = await usersCollectionReference.doc(userDocId).get();
+
+    try {
+      if (document["level_of_complete"] != null) {
+        List<dynamic> level_of_complete = document["level_of_complete"];
+
+        int all_tasks = level_of_complete[1];
+        int completed_tasks = level_of_complete[0];
+
+        usersCollectionReference.doc(userDocId).update({
+          'level_of_complete': [completed_tasks + 1, all_tasks]
+        }).then((val) {
+          print("add task to level_of_complete");
+        });
+      }
+    } catch (e) {
+      print("Error adding while level of complete: $e");
+    }
   }
 }
