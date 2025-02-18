@@ -1,3 +1,4 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -6,12 +7,16 @@ import 'package:smart_to_do_app/providers/todotask_provider.dart';
 import 'package:smart_to_do_app/services/firebase_service.dart';
 import 'package:intl/intl.dart';
 import 'package:smart_to_do_app/widgets/to_do_form_card.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ToDoListCard extends StatefulWidget {
   final ToDoTask ToDoTaskData;
   final Color themecolor;
-  const ToDoListCard(
-      {super.key, required this.ToDoTaskData, required this.themecolor});
+  const ToDoListCard({
+    super.key,
+    required this.ToDoTaskData,
+    required this.themecolor,
+  });
 
   @override
   State<ToDoListCard> createState() => _ToDoListCardState();
@@ -24,11 +29,11 @@ class _ToDoListCardState extends State<ToDoListCard> {
       padding: const EdgeInsets.all(10.0),
       child: Container(
         width: 300,
-        padding: EdgeInsets.all(10),
+        padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               color: Colors.black12,
               blurRadius: 6,
@@ -47,54 +52,65 @@ class _ToDoListCardState extends State<ToDoListCard> {
                 borderRadius: BorderRadius.circular(3),
               ),
             ),
-            SizedBox(width: 12),
+            const SizedBox(width: 9),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     widget.ToDoTaskData.title!,
-                    style: TextStyle(
+                    style: GoogleFonts.phudu(
                       fontSize: 16,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
+                  const SizedBox(height: 6),
                   Text(
                     widget.ToDoTaskData.description!,
-                    style: TextStyle(
+                    style: GoogleFonts.archivo(
                       fontSize: 14,
                       fontWeight: FontWeight.w300,
                     ),
                   ),
-                  SizedBox(height: 6),
+                  const SizedBox(height: 6),
                   Row(
                     key: widget.key,
                     children: [
-                      Icon(Icons.access_time,
+                      const Icon(Icons.access_time,
                           size: 14, color: Color.fromARGB(255, 0, 0, 0)),
-                      SizedBox(width: 4),
+                      const SizedBox(width: 4),
                       Text(
                         DateFormat('yyyy-MM-dd').format(
                             (widget.ToDoTaskData.date as Timestamp).toDate())!,
-                        style:
-                            TextStyle(fontSize: 13, color: widget.themecolor),
+                        style: GoogleFonts.archivo(
+                            fontSize: 12,
+                            color: widget.themecolor,
+                            fontWeight: FontWeight.w700),
                       ),
-                      SizedBox(width: 8),
-                      Icon(Icons.low_priority_rounded,
+                      const SizedBox(width: 8),
+                      const Icon(Icons.low_priority_rounded,
                           size: 14, color: Color.fromARGB(255, 0, 0, 0)),
-                      SizedBox(width: 2),
-                      Text(widget.ToDoTaskData.priority.toString()!,
-                          style: TextStyle(
-                              color: widget.themecolor, fontSize: 13)),
+                      const SizedBox(width: 0),
+                      Text(" ${widget.ToDoTaskData.priority.toString()!}",
+                          style: GoogleFonts.archivo(
+                              color:
+                                  widget.ToDoTaskData.priority == "Top Priority"
+                                      ? Colors.red
+                                      : widget.ToDoTaskData.priority ==
+                                              "Low Priority"
+                                          ? Colors.lightBlueAccent
+                                          : Colors.green,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700)),
                       // Text(widget.ToDoTaskData.tasktype.toString()!,
                       //     style: TextStyle(
                       //         color: Colors.purple, fontSize: 15)),
-                      SizedBox(width: 20),
+                      const SizedBox(width: 20),
                       Container(
                           width: 35,
                           height: 35,
-                          decoration: BoxDecoration(
-                            color: Colors.red,
+                          decoration: const BoxDecoration(
+                            color: Color.fromARGB(255, 0, 38, 255),
                             shape: BoxShape.circle,
                           ),
                           child: IconButton(
@@ -112,28 +128,100 @@ class _ToDoListCardState extends State<ToDoListCard> {
 
                                   if (widget.ToDoTaskData.tasktype ==
                                       "Personal") {
-                                    context
-                                        .read<TodotaskProvider>()
-                                        .removeCurrentuser_personal_ToDOTask(
-                                            taskId: widget.ToDoTaskData.id!);
+                                    if (widget.ToDoTaskData.status == "not") {
+                                      context
+                                          .read<TodotaskProvider>()
+                                          .removeCurrentuser_not_complete_personal_ToDOTaskIds(
+                                              taskId: widget.ToDoTaskData.id!);
+                                      context
+                                          .read<TodotaskProvider>()
+                                          .removealltodotask_provider(
+                                              taskId: widget.ToDoTaskData.id!);
+                                      context
+                                          .read<TodotaskProvider>()
+                                          .remove_current_user_not_completed_personal_ToDoTasks(
+                                              taskid: widget.ToDoTaskData.id!);
+                                      context
+                                          .read<TodotaskProvider>()
+                                          .removeCurrentuser_personal_ToDOTaskList(
+                                              taskId: widget.ToDoTaskData.id!);
+                                      context
+                                          .read<TodotaskProvider>()
+                                          .removeCurrentuser_personal_ToDOTaskIds(
+                                              taskId: widget.ToDoTaskData.id!);
+                                    }
                                   } else if (widget.ToDoTaskData.tasktype ==
                                       "Work") {
-                                    context
-                                        .read<TodotaskProvider>()
-                                        .removeCurrentuser_work_ToDOTask(
-                                            taskId: widget.ToDoTaskData.id!);
+                                    if (widget.ToDoTaskData.status == "not") {
+                                      context
+                                          .read<TodotaskProvider>()
+                                          .removeCurrentuser_not_complete_work_ToDOTaskIds(
+                                              taskId: widget.ToDoTaskData.id!);
+                                      context
+                                          .read<TodotaskProvider>()
+                                          .removealltodotask_provider(
+                                              taskId: widget.ToDoTaskData.id!);
+                                      context
+                                          .read<TodotaskProvider>()
+                                          .remove_current_user_not_completed_work_ToDoTasks(
+                                              taskid: widget.ToDoTaskData.id!);
+                                      context
+                                          .read<TodotaskProvider>()
+                                          .removeCurrentuser_work_ToDOTaskList(
+                                              taskId: widget.ToDoTaskData.id!);
+                                      context
+                                          .read<TodotaskProvider>()
+                                          .removeCurrentuser_work_ToDOTaskIds(
+                                              taskId: widget.ToDoTaskData.id!);
+                                    }
                                   } else if (widget.ToDoTaskData.tasktype ==
                                       "Health") {
-                                    context
-                                        .read<TodotaskProvider>()
-                                        .removeCurrentuser_health_ToDOTask(
-                                            taskId: widget.ToDoTaskData.id!);
+                                    if (widget.ToDoTaskData.status == "not") {
+                                      context
+                                          .read<TodotaskProvider>()
+                                          .removeCurrentuser_not_complete_health_ToDOTaskIds(
+                                              taskId: widget.ToDoTaskData.id!);
+                                      context
+                                          .read<TodotaskProvider>()
+                                          .removealltodotask_provider(
+                                              taskId: widget.ToDoTaskData.id!);
+                                      context
+                                          .read<TodotaskProvider>()
+                                          .remove_current_user_not_completed_health_ToDoTasks(
+                                              taskid: widget.ToDoTaskData.id!);
+                                      context
+                                          .read<TodotaskProvider>()
+                                          .removeCurrentuser_health_ToDOTaskList(
+                                              taskId: widget.ToDoTaskData.id!);
+                                      context
+                                          .read<TodotaskProvider>()
+                                          .removeCurrentuser_health_ToDOTaskIds(
+                                              taskId: widget.ToDoTaskData.id!);
+                                    }
                                   } else if (widget.ToDoTaskData.tasktype ==
                                       "Social") {
-                                    context
-                                        .read<TodotaskProvider>()
-                                        .removeCurrentuser_health_ToDOTask(
-                                            taskId: widget.ToDoTaskData.id!);
+                                    if (widget.ToDoTaskData.status == "not") {
+                                      context
+                                          .read<TodotaskProvider>()
+                                          .removeCurrentuser_not_complete_social_ToDOTaskIds(
+                                              taskId: widget.ToDoTaskData.id!);
+                                      context
+                                          .read<TodotaskProvider>()
+                                          .removealltodotask_provider(
+                                              taskId: widget.ToDoTaskData.id!);
+                                      context
+                                          .read<TodotaskProvider>()
+                                          .remove_current_user_not_completed_social_ToDoTasks(
+                                              taskid: widget.ToDoTaskData.id!);
+                                      context
+                                          .read<TodotaskProvider>()
+                                          .removeCurrentuser_social_ToDOTaskList(
+                                              taskId: widget.ToDoTaskData.id!);
+                                      context
+                                          .read<TodotaskProvider>()
+                                          .removeCurrentuser_social_ToDOTaskIds(
+                                              taskId: widget.ToDoTaskData.id!);
+                                    }
                                   }
 
                                   FirebaseService.delete_level_of_complete();
@@ -144,34 +232,50 @@ class _ToDoListCardState extends State<ToDoListCard> {
                                         .add_level_of_complete(value: value);
                                   });
 
-                                  //Navigator.of(context).pop();
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(const SnackBar(
-                                    backgroundColor: Colors.deepPurple,
-                                    shape: StadiumBorder(),
-                                    behavior: SnackBarBehavior.floating,
-                                    margin: EdgeInsets.all(20),
-                                    content: Text(
-                                      "Delete a Task",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 15),
+                                  Flushbar(
+                                    message: "Deleted a Task",
+                                    icon: Icon(
+                                      Icons.delete_forever_outlined,
+                                      size: 28.0,
+                                      color: Color.fromARGB(255, 217, 38, 241),
                                     ),
-                                    elevation: 12,
-                                  ));
+                                    margin: EdgeInsets.all(6.0),
+                                    flushbarStyle: FlushbarStyle.FLOATING,
+                                    flushbarPosition: FlushbarPosition.BOTTOM,
+                                    textDirection: Directionality.of(context),
+                                    borderRadius: BorderRadius.circular(12),
+                                    duration: Duration(seconds: 3),
+                                    leftBarIndicatorColor:
+                                        Color.fromARGB(255, 217, 38, 241),
+                                  ).show(context);
+                                  //Navigator.of(context).pop();
+                                  // ScaffoldMessenger.of(context)
+                                  //     .showSnackBar(const SnackBar(
+                                  //   backgroundColor: Colors.deepPurple,
+                                  //   shape: StadiumBorder(),
+                                  //   behavior: SnackBarBehavior.floating,
+                                  //   margin: EdgeInsets.all(20),
+                                  //   content: Text(
+                                  //     "Delete a Task",
+                                  //     style: TextStyle(
+                                  //         fontWeight: FontWeight.w500,
+                                  //         fontSize: 15),
+                                  //   ),
+                                  //   elevation: 12,
+                                  // ));
                                 });
                               },
-                              icon: Icon(
+                              icon: const Icon(
                                 Icons.delete,
                                 size: 20,
                                 color: Colors.white,
                               ))),
-                      SizedBox(width: 6),
+                      const SizedBox(width: 6),
                       Container(
                           width: 35,
                           height: 35,
-                          decoration: BoxDecoration(
-                            color: Colors.green,
+                          decoration: const BoxDecoration(
+                            color: Color.fromARGB(255, 255, 115, 0),
                             shape: BoxShape.circle,
                           ),
                           child: IconButton(
@@ -179,93 +283,145 @@ class _ToDoListCardState extends State<ToDoListCard> {
                               onPressed: () {
                                 ToDoFormCard obj = ToDoFormCard();
                                 obj.DialogCard(
-                                    pagenamepassed:
-                                        widget.ToDoTaskData.tasktype!,
-                                    tasktypepassed:
-                                        widget.ToDoTaskData.tasktype!,
-                                    docid: widget.ToDoTaskData.id!,
-                                    whichform: false,
-                                    contextxx: context,
-                                    descriptionController: widget
-                                        .ToDoTaskData.description
-                                        .toString(),
-                                    titleController:
-                                        widget.ToDoTaskData.title.toString(),
-                                    datepassed: widget.ToDoTaskData.date!,
-                                    prioritypassed:
-                                        widget.ToDoTaskData.priority!);
+                                        pagenamepassed:
+                                            widget.ToDoTaskData.tasktype!,
+                                        tasktypepassed:
+                                            widget.ToDoTaskData.tasktype!,
+                                        docid: widget.ToDoTaskData.id!,
+                                        whichform: false,
+                                        contextxx: context,
+                                        descriptionController: widget
+                                            .ToDoTaskData.description
+                                            .toString(),
+                                        titleController: widget
+                                            .ToDoTaskData.title
+                                            .toString(),
+                                        datepassed: widget.ToDoTaskData.date!,
+                                        prioritypassed:
+                                            widget.ToDoTaskData.priority!)
+                                    .then((value) {});
                               },
-                              icon: Icon(
+                              icon: const Icon(
                                 Icons.edit_document,
                                 size: 20,
-                                color: Colors.white,
+                                color: Color.fromARGB(255, 255, 255, 255),
                               ))),
                     ],
                   ),
                 ],
               ),
             ),
-            SizedBox(
+            const SizedBox(
               width: 10,
             ),
             Container(
                 width: 40,
                 height: 40,
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 255, 238, 5),
+                decoration: const BoxDecoration(
+                  color: Color.fromARGB(255, 255, 238, 5),
                   shape: BoxShape.circle,
                 ),
                 child: IconButton(
                     autofocus: true,
                     onPressed: () {
-                      FirebaseService.deleteCurrentUserToDoTask(
-                          taskId: widget.ToDoTaskData.id!);
-
-                      FirebaseService.gettodotasks().then((ToDoTaskData) {
+                      if (widget.ToDoTaskData.tasktype == "Personal") {
+                        FirebaseService.add_level_of_complete();
                         context
                             .read<TodotaskProvider>()
-                            .addalltodotasks_Provider(todotasks: ToDoTaskData);
-
-                        if (widget.ToDoTaskData.tasktype == "Personal") {
-                          context
-                              .read<TodotaskProvider>()
-                              .removeCurrentuser_personal_ToDOTask(
-                                  taskId: widget.ToDoTaskData.id!);
-                        } else if (widget.ToDoTaskData.tasktype == "Work") {
-                          context
-                              .read<TodotaskProvider>()
-                              .removeCurrentuser_work_ToDOTask(
-                                  taskId: widget.ToDoTaskData.id!);
-                        } else if (widget.ToDoTaskData.tasktype == "Health") {
-                          context
-                              .read<TodotaskProvider>()
-                              .removeCurrentuser_health_ToDOTask(
-                                  taskId: widget.ToDoTaskData.id!);
-                        } else if (widget.ToDoTaskData.tasktype == "Social") {
-                          context
-                              .read<TodotaskProvider>()
-                              .removeCurrentuser_health_ToDOTask(
-                                  taskId: widget.ToDoTaskData.id!);
-                        }
-
+                            .removeCurrentuser_not_complete_personal_ToDOTaskIds(
+                                taskId: widget.ToDoTaskData.id!);
+                        context
+                            .read<TodotaskProvider>()
+                            .remove_current_user_not_completed_personal_ToDoTasks(
+                                taskid: widget.ToDoTaskData.id!);
+                        context
+                            .read<TodotaskProvider>()
+                            .addcurrentuser_personal_completed_ToDotask_done_button(
+                                todotaskId: widget.ToDoTaskData.id!);
+                        FirebaseService.completedtAsk_update(
+                            taskId: widget.ToDoTaskData.id!);
+                      } else if (widget.ToDoTaskData.tasktype == "Work") {
                         FirebaseService.add_level_of_complete();
+                        context
+                            .read<TodotaskProvider>()
+                            .removeCurrentuser_not_complete_work_ToDOTaskIds(
+                                taskId: widget.ToDoTaskData.id!);
+                        context
+                            .read<TodotaskProvider>()
+                            .remove_current_user_not_completed_work_ToDoTasks(
+                                taskid: widget.ToDoTaskData.id!);
+                        context
+                            .read<TodotaskProvider>()
+                            .addcurrentuser_work_completed_ToDotask_done_button(
+                                todotaskId: widget.ToDoTaskData.id!);
+                        FirebaseService.completedtAsk_update(
+                            taskId: widget.ToDoTaskData.id!);
+                      } else if (widget.ToDoTaskData.tasktype == "Health") {
+                        FirebaseService.add_level_of_complete();
+                        context
+                            .read<TodotaskProvider>()
+                            .removeCurrentuser_not_complete_health_ToDOTaskIds(
+                                taskId: widget.ToDoTaskData.id!);
+                        context
+                            .read<TodotaskProvider>()
+                            .remove_current_user_not_completed_health_ToDoTasks(
+                                taskid: widget.ToDoTaskData.id!);
+                        context
+                            .read<TodotaskProvider>()
+                            .addcurrentuser_health_completed_ToDotask_done_button(
+                                todotaskId: widget.ToDoTaskData.id!);
+                        FirebaseService.completedtAsk_update(
+                            taskId: widget.ToDoTaskData.id!);
+                      } else if (widget.ToDoTaskData.tasktype == "Social") {
+                        FirebaseService.add_level_of_complete();
+                        context
+                            .read<TodotaskProvider>()
+                            .removeCurrentuser_not_complete_social_ToDOTaskIds(
+                                taskId: widget.ToDoTaskData.id!);
+                        context
+                            .read<TodotaskProvider>()
+                            .remove_current_user_not_completed_social_ToDoTasks(
+                                taskid: widget.ToDoTaskData.id!);
+                        context
+                            .read<TodotaskProvider>()
+                            .addcurrentuser_social_completed_ToDotask_done_button(
+                                todotaskId: widget.ToDoTaskData.id!);
+                        FirebaseService.completedtAsk_update(
+                            taskId: widget.ToDoTaskData.id!);
+                      }
 
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(const SnackBar(
-                          backgroundColor: Colors.deepPurple,
-                          shape: StadiumBorder(),
-                          behavior: SnackBarBehavior.floating,
-                          margin: EdgeInsets.all(20),
-                          content: Text(
-                            "Completed a Task",
-                            style: TextStyle(
-                                fontWeight: FontWeight.w500, fontSize: 15),
-                          ),
-                          elevation: 12,
-                        ));
-                      });
+                      FirebaseService.add_level_of_complete();
+                      Flushbar(
+                        message: "Completed a Task",
+                        icon: Icon(
+                          Icons.add_task,
+                          size: 28.0,
+                          color: Color.fromARGB(255, 217, 38, 241),
+                        ),
+                        margin: EdgeInsets.all(6.0),
+                        flushbarStyle: FlushbarStyle.FLOATING,
+                        flushbarPosition: FlushbarPosition.BOTTOM,
+                        textDirection: Directionality.of(context),
+                        borderRadius: BorderRadius.circular(12),
+                        duration: Duration(seconds: 3),
+                        leftBarIndicatorColor:
+                            Color.fromARGB(255, 217, 38, 241),
+                      ).show(context);
+                      // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      //   backgroundColor: Colors.deepPurple,
+                      //   shape: StadiumBorder(),
+                      //   behavior: SnackBarBehavior.floating,
+                      //   margin: EdgeInsets.all(20),
+                      //   content: Text(
+                      //     "Completed a Task",
+                      //     style: TextStyle(
+                      //         fontWeight: FontWeight.w500, fontSize: 15),
+                      //   ),
+                      //   elevation: 12,
+                      // ));
+                      //});
                     },
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.add_task,
                       size: 20,
                     ))),

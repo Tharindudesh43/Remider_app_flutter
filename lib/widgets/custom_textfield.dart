@@ -28,11 +28,11 @@ class _custom_textfieldState extends State<custom_textfield> {
               decoration: InputDecoration(
                 errorText: widget.errorText,
                 filled: true,
-                fillColor: Colors.yellow.withOpacity(0.1),
+                fillColor: Color.fromARGB(255, 217, 38, 241).withOpacity(0.1),
                 icon: const Icon(
                   color: Color.fromARGB(255, 103, 96, 45),
                   weight: 120,
-                  Icons.lock,
+                  Icons.password,
                   size: 24,
                 ),
                 labelText: 'Password',
@@ -59,11 +59,17 @@ class _custom_textfieldState extends State<custom_textfield> {
               controller: widget.controller,
               decoration: InputDecoration(
                   filled: true,
-                  fillColor: Colors.yellow.withOpacity(0.1),
-                  icon: const Icon(
-                    color: Color.fromARGB(255, 103, 96, 45),
+                  fillColor: Color.fromARGB(255, 217, 38, 241).withOpacity(0.1),
+                  icon: Icon(
+                    color: const Color.fromARGB(255, 103, 96, 45),
                     weight: 120,
-                    Icons.info,
+                    widget.textfieldvalue == "Name"
+                        ? Icons.abc
+                        : widget.textfieldvalue == "Email"
+                            ? Icons.email
+                            : widget.textfieldvalue == "Mobile Number"
+                                ? Icons.mobile_friendly
+                                : Icons.password,
                     size: 23,
                   ),
                   errorText: widget.errorText,

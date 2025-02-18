@@ -7,6 +7,7 @@ class ToDoTask {
   String? description;
   String? priority;
   String? tasktype;
+  String? status;
   ToDoTask({
     this.id,
     this.title,
@@ -14,5 +15,6 @@ class ToDoTask {
     this.description,
     this.priority,
     this.tasktype,
+    this.status,
   });
 }

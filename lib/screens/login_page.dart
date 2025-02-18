@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:smart_to_do_app/main.dart';
 import 'package:smart_to_do_app/screens/signup_page.dart';
 import 'package:smart_to_do_app/services/firebase_auth_service.dart';
@@ -30,11 +32,12 @@ class _LoginPageState extends State<LoginPage> {
               Stack(
                 children: [
                   Container(
-                    height: 300,
+                    height: 220,
+                    width: double.infinity,
                     child: Opacity(
                       opacity: 0.6,
-                      child: Image.network(
-                        'https://images.pexels.com/photos/7841844/pexels-photo-7841844.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+                      child: Image.asset(
+                        'assets/login.jpg',
                         fit: BoxFit.fill,
                       ),
                     ),
@@ -43,7 +46,7 @@ class _LoginPageState extends State<LoginPage> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       const SizedBox(
-                        height: 70,
+                        height: 150,
                       ),
                       Container(
                         decoration: const BoxDecoration(
@@ -53,31 +56,31 @@ class _LoginPageState extends State<LoginPage> {
                             color: Colors.white),
                         child: Column(
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 30),
-                              child: Container(
-                                  width: 150,
-                                  height: 150,
-                                  decoration: const BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    image: DecorationImage(
-                                      image: AssetImage('assets/profile.png'),
-                                      fit: BoxFit.cover,
-                                    ),
-                                  )),
-                            ),
+                            // Padding(
+                            //   padding: const EdgeInsets.only(top: 30),
+                            //   child: Container(
+                            //       width: 150,
+                            //       height: 150,
+                            //       decoration: const BoxDecoration(
+                            //         shape: BoxShape.circle,
+                            //         image: DecorationImage(
+                            //           image: AssetImage('assets/profile.png'),
+                            //           fit: BoxFit.cover,
+                            //         ),
+                            //       )),
+                            // ),
                             const SizedBox(
-                              height: 15,
+                              height: 35,
                             ),
                             Text(
                               "LogIn",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w500),
+                              style: GoogleFonts.monda(
+                                  color: Color.fromARGB(255, 217, 38, 241),
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w700),
                             ),
                             const SizedBox(
-                              height: 10,
+                              height: 20,
                             ),
                             custom_textfield(
                               textfieldvalue: "Email",
@@ -151,6 +154,10 @@ class _LoginPageState extends State<LoginPage> {
                               isloadinggoogle: isloadinggoogle,
                               btnText: "LOG IN with Google",
                               onTap: () {
+                                setState(() {
+                                  isloadinggoogle = true;
+                                });
+
                                 FirebaseAuthService.signInWithGoogle()
                                     .then((value) {
                                   if (value == "Google User Added") {
@@ -158,7 +165,9 @@ class _LoginPageState extends State<LoginPage> {
                                         .authStateChanges()
                                         .listen((User? user) {
                                       if (user != null) {
-                                        isloadinggoogle = false;
+                                        setState(() {
+                                          isloadinggoogle = false;
+                                        });
                                         print("User ------ " +
                                             user.uid.toString());
                                         Navigator.pushAndRemoveUntil(
@@ -177,24 +186,49 @@ class _LoginPageState extends State<LoginPage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Text(
+                                Text(
                                   "Are you haven't account ? ",
-                                  style: TextStyle(fontSize: 15),
+                                  style: GoogleFonts.viga(fontSize: 15),
                                 ),
                                 InkWell(
-                                    onTap: () {
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  SignupPage()));
-                                    },
-                                    child: const Text(
-                                      "SignUp",
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        decoration: TextDecoration.underline,
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      PageRouteBuilder(
+                                        pageBuilder: (contextpassed, animation,
+                                                persnalAnimation) =>
+                                            SignupPage(),
+                                        transitionsBuilder: (contextpassed,
+                                            animation,
+                                            persnalAnimation,
+                                            child) {
+                                          return FadeTransition(
+                                              opacity: animation, child: child);
+                                        },
                                       ),
-                                    ))
+                                    );
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Container(
+                                        width: 70,
+                                        height: 30,
+                                        decoration: BoxDecoration(
+                                            color: Color.fromARGB(
+                                                255, 217, 38, 241),
+                                            borderRadius:
+                                                BorderRadius.circular(100)),
+                                        child: Center(
+                                            child: Text(
+                                          "Sign Up",
+                                          style: GoogleFonts.viga(
+                                              color: const Color.fromARGB(
+                                                  255, 255, 255, 255),
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w500),
+                                        ))),
+                                  ),
+                                )
                               ],
                             ),
                             const SizedBox(

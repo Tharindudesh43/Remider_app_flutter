@@ -1,14 +1,14 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:smart_to_do_app/providers/todotask_provider.dart';
 import 'package:smart_to_do_app/screens/health_tasks.dart';
-import 'package:smart_to_do_app/screens/home_screen.dart';
-import 'package:smart_to_do_app/screens/personal_tasks.dart';
 import 'package:smart_to_do_app/screens/social_tasks.dart';
-import 'package:smart_to_do_app/screens/work_tasks.dart';
 import 'package:smart_to_do_app/services/firebase_service.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ToDoFormCard {
   Future<dynamic> DialogCard(
@@ -39,23 +39,27 @@ class ToDoFormCard {
     String pagename = pagenamepassed;
 
     final ValueNotifier<bool> isLoadCardButton = ValueNotifier<bool>(false);
-
+    final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+        GlobalKey<ScaffoldMessengerState>();
     return showDialog(
       context: contextxx!,
-      builder: (BuildContext context) {
+      builder: (contextxx) {
         return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
+          builder: (contextxx, StateSetter setState) {
             return Dialog(
               insetPadding: EdgeInsets.all(0),
               child: Container(
-                  width: MediaQuery.of(context).size.width - 20,
-                  height: MediaQuery.of(context).size.height / 1.5,
+                  width: MediaQuery.of(contextxx).size.width - 10,
+                  height: MediaQuery.of(contextxx).size.height / 1.3,
                   child: whichformofthis == true
                       ? AlertDialog(
                           scrollable: true,
-                          title: const Text(
+                          title: Text(
                             'ADD A TASK',
-                            style: TextStyle(fontSize: 18, color: Colors.black),
+                            style: GoogleFonts.bungee(
+                                fontSize: 18,
+                                color: Color.fromARGB(255, 217, 38, 241),
+                                fontWeight: FontWeight.w200),
                           ),
                           content: SingleChildScrollView(
                             child: ListBody(
@@ -74,34 +78,43 @@ class ToDoFormCard {
                                   children: [
                                     Text(
                                       "${selectedDate.toLocal()}".split(' ')[0],
-                                      style: const TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold),
+                                      style: GoogleFonts.bungee(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w200,
+                                          color: Color.fromARGB(
+                                              255, 157, 210, 51)),
                                     ),
-                                    TextButton(
-                                      autofocus: true,
-                                      style: TextButton.styleFrom(
-                                          backgroundColor: Colors.amberAccent),
-                                      onPressed: () async {
-                                        final DateTime? picked =
-                                            await showDatePicker(
-                                          context: context,
-                                          initialDate: selectedDate,
-                                          firstDate: DateTime(2015, 8),
-                                          lastDate: DateTime(2101),
-                                        );
-                                        if (picked != null &&
-                                            picked != selectedDate) {
-                                          setState(() {
-                                            selectedDate = picked;
-                                          });
-                                        }
-                                      },
-                                      child: const Text(
-                                        'Select date',
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.bold),
+                                    SizedBox(
+                                      width: 100,
+                                      height: 30,
+                                      child: TextButton(
+                                        autofocus: true,
+                                        style: TextButton.styleFrom(
+                                            backgroundColor: Color.fromARGB(
+                                                255, 217, 38, 241)),
+                                        onPressed: () async {
+                                          final DateTime? picked =
+                                              await showDatePicker(
+                                            context: contextxx,
+                                            initialDate: selectedDate,
+                                            firstDate: DateTime(2015, 8),
+                                            lastDate: DateTime(2101),
+                                          );
+                                          if (picked != null &&
+                                              picked != selectedDate) {
+                                            setState(() {
+                                              selectedDate = picked;
+                                            });
+                                          }
+                                        },
+                                        child: Text(
+                                          'Select date',
+                                          style: GoogleFonts.bungee(
+                                              fontSize: 10,
+                                              color: const Color.fromARGB(
+                                                  255, 255, 255, 255),
+                                              fontWeight: FontWeight.w100),
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -112,37 +125,52 @@ class ToDoFormCard {
                                   children: [
                                     Text(
                                       selectedpriority,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 15),
+                                      style: GoogleFonts.bungee(
+                                        fontWeight: FontWeight.w200,
+                                        fontSize: 11,
+                                        color: selectedpriority ==
+                                                "Top Priority"
+                                            ? Colors.red
+                                            : selectedpriority == "Low Priority"
+                                                ? Colors.lightBlueAccent
+                                                : selectedpriority ==
+                                                        "Medium Priority"
+                                                    ? Colors.green
+                                                    : Colors.black,
+                                      ),
                                     ),
                                     Container(
-                                      decoration: const BoxDecoration(
-                                        shape: BoxShape.circle,
+                                      decoration: const BoxDecoration(),
+                                      child: DropdownButton<String>(
+                                        dropdownColor: const Color.fromARGB(
+                                            255, 243, 244, 245),
+                                        focusColor: Colors.amberAccent,
+                                        icon: const Icon(
+                                            Icons.keyboard_arrow_down),
+                                        items: values.map((String items) {
+                                          return DropdownMenuItem(
+                                            value: items,
+                                            child: Text(
+                                              items,
+                                              style: GoogleFonts.bungee(
+                                                fontSize: 11,
+                                                color: items == "Top Priority"
+                                                    ? Colors.red
+                                                    : items == "Low Priority"
+                                                        ? Colors.lightBlueAccent
+                                                        : Colors.green,
+                                              ),
+                                            ),
+                                          );
+                                        }).toList(),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            selectedpriority = value!;
+                                          });
+                                        },
+                                        underline: SizedBox(),
                                       ),
-                                      padding: EdgeInsets.all(5),
-                                      child: Center(
-                                        child: DropdownButton<String>(
-                                          dropdownColor: const Color.fromARGB(
-                                              255, 243, 244, 245),
-                                          focusColor: Colors.amberAccent,
-                                          icon: const Icon(
-                                              Icons.keyboard_arrow_down),
-                                          items: values.map((String items) {
-                                            return DropdownMenuItem(
-                                              value: items,
-                                              child: Text(items),
-                                            );
-                                          }).toList(),
-                                          onChanged: (value) {
-                                            setState(() {
-                                              selectedpriority = value!;
-                                            });
-                                          },
-                                          underline: SizedBox(),
-                                        ),
-                                      ),
-                                    )
+                                    ),
                                   ],
                                 ),
                                 Row(
@@ -151,15 +179,26 @@ class ToDoFormCard {
                                   children: [
                                     Text(
                                       selectedtasktype,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 15),
+                                      style: GoogleFonts.bungee(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 12,
+                                        color: selectedtasktype == "Personal"
+                                            ? Color.fromARGB(238, 86, 0, 247)
+                                            : selectedtasktype == "Work"
+                                                ? Colors.lightBlue
+                                                : selectedtasktype == "Health"
+                                                    ? Colors.pink
+                                                    : selectedtasktype ==
+                                                            "Social"
+                                                        ? Colors.orange
+                                                        : Colors.black,
+                                      ),
                                     ),
                                     Container(
                                       decoration: const BoxDecoration(
                                         shape: BoxShape.circle,
                                       ),
-                                      padding: EdgeInsets.all(5),
+                                      padding: const EdgeInsets.all(0),
                                       child: Center(
                                         child: DropdownButton<String>(
                                           dropdownColor: const Color.fromARGB(
@@ -171,7 +210,29 @@ class ToDoFormCard {
                                               .map((String items) {
                                             return DropdownMenuItem(
                                               value: items,
-                                              child: Text(items),
+                                              child: Text(
+                                                items,
+                                                style: GoogleFonts.bungee(
+                                                  fontSize: 12,
+                                                  color: items == "Personal"
+                                                      ? Color.fromARGB(
+                                                          238, 86, 0, 247)
+                                                      : items == "Work"
+                                                          ? Colors.lightBlue
+                                                          : items == "Health"
+                                                              ? Colors.pink
+                                                              : items ==
+                                                                      "Social"
+                                                                  ? Colors
+                                                                      .orange
+                                                                  : const Color
+                                                                      .fromARGB(
+                                                                      255,
+                                                                      0,
+                                                                      0,
+                                                                      0),
+                                                ),
+                                              ),
                                             );
                                           }).toList(),
                                           onChanged: (value) {
@@ -179,7 +240,7 @@ class ToDoFormCard {
                                               selectedtasktype = value!;
                                             });
                                           },
-                                          underline: SizedBox(),
+                                          underline: const SizedBox(),
                                         ),
                                       ),
                                     ),
@@ -193,10 +254,11 @@ class ToDoFormCard {
                               style: TextButton.styleFrom(
                                   backgroundColor:
                                       const Color.fromARGB(255, 255, 4, 4)),
-                              child: const Text('Reset',
-                                  style: TextStyle(
+                              child: Text('Reset',
+                                  style: GoogleFonts.bungee(
                                       color: const Color.fromARGB(
-                                          255, 255, 255, 255))),
+                                          255, 255, 255, 255),
+                                      fontWeight: FontWeight.w300)),
                               onPressed: () {
                                 setState(() {
                                   selectedDate = DateTime.now();
@@ -240,8 +302,7 @@ class ToDoFormCard {
                                               .updateCurrentuserToDOTasks(
                                                   taskId: TaskId);
 
-                                          //---------------
-
+                                          //-------------------------
                                           FirebaseService
                                                   .get_level_of_complete()
                                               .then((value) {
@@ -250,86 +311,117 @@ class ToDoFormCard {
                                                 .add_level_of_complete(
                                                     value: value);
                                           });
-                                          //---------------
-
-                                          ScaffoldMessenger.of(contextxx)
-                                              .showSnackBar(const SnackBar(
-                                            backgroundColor: Colors.purple,
-                                            shape: StadiumBorder(),
-                                            behavior: SnackBarBehavior.floating,
-                                            margin: EdgeInsets.all(5),
-                                            content: Text("Added a Task"),
-                                            elevation: 12,
-                                          ));
-                                          Navigator.of(context).pop();
+                                          //--------------------------
                                         });
 
-                                        //--------------------
-                                        setState(() {
-                                          FirebaseService
-                                                  .get_level_of_complete()
-                                              .then((value) {
-                                            context
-                                                .read<TodotaskProvider>()
-                                                .add_level_of_complete(
-                                                    value: value);
-                                          });
-                                        });
+                                        if (selectedtasktype == "Personal") {
+                                          context
+                                              .read<TodotaskProvider>()
+                                              .reduce_level_of_completion_personal_tasks();
+                                        } else if (selectedtasktype == "Work") {
+                                          context
+                                              .read<TodotaskProvider>()
+                                              .reduce_level_of_completion_work_tasks();
+                                        } else if (selectedtasktype ==
+                                            "Health") {
+                                          context
+                                              .read<TodotaskProvider>()
+                                              .reduce_level_of_completion_health_tasks();
+                                        } else if (selectedtasktype ==
+                                            "Social") {
+                                          context
+                                              .read<TodotaskProvider>()
+                                              .reduce_level_of_completion_social_tasks();
+                                        }
+
+                                        Navigator.of(contextxx).pop();
+                                        Flushbar(
+                                          message: "Added a Task",
+                                          icon: Icon(
+                                            Icons.add,
+                                            size: 28.0,
+                                            color: Color.fromARGB(
+                                                255, 217, 38, 241),
+                                          ),
+                                          margin: EdgeInsets.all(6.0),
+                                          flushbarStyle: FlushbarStyle.FLOATING,
+                                          flushbarPosition:
+                                              FlushbarPosition.BOTTOM,
+                                          textDirection:
+                                              Directionality.of(context),
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                          duration: Duration(seconds: 3),
+                                          leftBarIndicatorColor:
+                                              Color.fromARGB(255, 217, 38, 241),
+                                        ).show(context);
+                                        // ScaffoldMessenger.of(context)
+                                        //     .showSnackBar(const SnackBar(
+                                        //   backgroundColor: Colors.purple,
+                                        //   shape: StadiumBorder(),
+                                        //   behavior: SnackBarBehavior.floating,
+                                        //   margin: EdgeInsets.all(5),
+                                        //   content: Center(
+                                        //     child: Text(
+                                        //       "Added a Task",
+                                        //       style: TextStyle(
+                                        //           fontWeight: FontWeight.w700,
+                                        //           color: Color.fromARGB(
+                                        //               255, 255, 255, 255)),
+                                        //     ),
+                                        //   ),
+                                        //   elevation: 20,
+                                        // ));
                                       } else {
                                         print(
                                             "Adding Error" + TaskId.toString());
                                       }
                                     });
-                                    setState(() {
-                                      HomeScreen obj = HomeScreen();
-                                      //obj;
-                                    });
+                                    context
+                                        .read<TodotaskProvider>()
+                                        .update_after_add_todo_level_complete();
                                   },
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 10, horizontal: 10),
-                                    child: Container(
-                                      width: 100,
-                                      height: 42,
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(100),
-                                        color: const Color.fromARGB(
-                                            215, 27, 255, 107),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 0,
-                                            right: 0,
-                                            top: 5,
-                                            bottom: 5),
-                                        child: isLoading
-                                            ? const SizedBox(
-                                                width: 15,
-                                                height: 15,
-                                                child: Center(
-                                                  child:
-                                                      CircularProgressIndicator(),
-                                                ),
-                                              )
-                                            : const Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    "Submit",
-                                                    style: const TextStyle(
-                                                      fontSize: 15,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      color: Color.fromARGB(
-                                                          255, 14, 14, 14),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                      ),
+                                  child:
+                                      // Padding(
+                                      //   padding: const EdgeInsets.symmetric(
+                                      //       vertical: 10, horizontal: 10),
+                                      //child:
+                                      Container(
+                                    width: 95,
+                                    height: 42,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(100),
+                                      color: const Color.fromARGB(
+                                          215, 27, 255, 107),
                                     ),
+                                    // child: Padding(
+                                    //   padding: const EdgeInsets.only(
+                                    //       left: 0, right: 0, top: 5, bottom: 5),
+                                    child: isLoading
+                                        ? const SizedBox(
+                                            width: 15,
+                                            height: 15,
+                                            child: Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            ),
+                                          )
+                                        : Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                "Save",
+                                                style: GoogleFonts.bungee(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w300,
+                                                  color: Color.fromARGB(
+                                                      255, 14, 14, 14),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                    //),
                                   ),
                                 );
                               },
@@ -337,12 +429,15 @@ class ToDoFormCard {
                           ],
                         )
                       :
-                      //-------------------------Update------------------------------
+                      //-------------------------Update-Form-----------------------------
                       AlertDialog(
                           scrollable: true,
-                          title: const Text(
+                          title: Text(
                             'ADD A TASK',
-                            style: TextStyle(fontSize: 18, color: Colors.black),
+                            style: GoogleFonts.bungee(
+                                fontSize: 18,
+                                color: Color.fromARGB(255, 217, 38, 241),
+                                fontWeight: FontWeight.w200),
                           ),
                           content: SingleChildScrollView(
                             child: ListBody(
@@ -361,72 +456,42 @@ class ToDoFormCard {
                                   children: [
                                     Text(
                                       "${selectedDate.toLocal()}".split(' ')[0],
-                                      style: const TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold),
+                                      style: GoogleFonts.bungee(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w200,
+                                          color: Color.fromARGB(
+                                              255, 157, 210, 51)),
                                     ),
-                                    TextButton(
-                                      autofocus: true,
-                                      style: TextButton.styleFrom(
-                                          backgroundColor: Colors.amberAccent),
-                                      onPressed: () async {
-                                        final DateTime? picked =
-                                            await showDatePicker(
-                                          context: context,
-                                          initialDate: selectedDate,
-                                          firstDate: DateTime(2015, 8),
-                                          lastDate: DateTime(2101),
-                                        );
-                                        if (picked != null &&
-                                            picked != selectedDate) {
-                                          setState(() {
-                                            selectedDate = picked;
-                                          });
-                                        }
-                                      },
-                                      child: const Text(
-                                        'Select date',
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      selectedpriority,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 15),
-                                    ),
-                                    Container(
-                                      decoration: const BoxDecoration(
-                                        shape: BoxShape.circle,
-                                      ),
-                                      padding: EdgeInsets.all(5),
-                                      child: Center(
-                                        child: DropdownButton<String>(
-                                          dropdownColor: const Color.fromARGB(
-                                              255, 243, 244, 245),
-                                          focusColor: Colors.amberAccent,
-                                          icon: const Icon(
-                                              Icons.keyboard_arrow_down),
-                                          items: values.map((String items) {
-                                            return DropdownMenuItem(
-                                              value: items,
-                                              child: Text(items),
-                                            );
-                                          }).toList(),
-                                          onChanged: (value) {
+                                    SizedBox(
+                                      width: 100,
+                                      height: 30,
+                                      child: TextButton(
+                                        autofocus: true,
+                                        style: TextButton.styleFrom(
+                                            backgroundColor: Color.fromARGB(
+                                                255, 217, 38, 241)),
+                                        onPressed: () async {
+                                          final DateTime? picked =
+                                              await showDatePicker(
+                                            context: contextxx,
+                                            initialDate: selectedDate,
+                                            firstDate: DateTime(2015, 8),
+                                            lastDate: DateTime(2101),
+                                          );
+                                          if (picked != null &&
+                                              picked != selectedDate) {
                                             setState(() {
-                                              selectedpriority = value!;
+                                              selectedDate = picked;
                                             });
-                                          },
-                                          underline: SizedBox(),
+                                          }
+                                        },
+                                        child: Text(
+                                          'Select date',
+                                          style: GoogleFonts.bungee(
+                                              fontSize: 10,
+                                              color: Color.fromARGB(
+                                                  255, 255, 255, 255),
+                                              fontWeight: FontWeight.w100),
                                         ),
                                       ),
                                     ),
@@ -437,16 +502,83 @@ class ToDoFormCard {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
+                                      selectedpriority,
+                                      style: GoogleFonts.bungee(
+                                          fontWeight: FontWeight.w200,
+                                          fontSize: 11,
+                                          color:
+                                              selectedpriority == "Top Priority"
+                                                  ? Colors.red
+                                                  : selectedpriority ==
+                                                          "Low Priority"
+                                                      ? const Color.fromARGB(
+                                                          255, 252, 161, 24)
+                                                      : Colors.green),
+                                    ),
+                                    Container(
+                                      decoration: const BoxDecoration(),
+                                      child: DropdownButton<String>(
+                                        dropdownColor: const Color.fromARGB(
+                                            255, 243, 244, 245),
+                                        focusColor: Colors.amberAccent,
+                                        icon: const Icon(
+                                            Icons.keyboard_arrow_down),
+                                        items: values.map((String items) {
+                                          return DropdownMenuItem(
+                                            value: items,
+                                            child: Text(
+                                              items,
+                                              style: GoogleFonts.bungee(
+                                                fontSize: 11,
+                                                color: items == "Top Priority"
+                                                    ? Colors.red
+                                                    : items == "Low Priority"
+                                                        ? Colors.lightBlueAccent
+                                                        : items ==
+                                                                "Medium Priority"
+                                                            ? Colors.green
+                                                            : Colors.black,
+                                              ),
+                                            ),
+                                          );
+                                        }).toList(),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            selectedpriority = value!;
+                                          });
+                                        },
+                                        underline: const SizedBox(),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
                                       selectedtasktype,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 15),
+                                      style: GoogleFonts.bungee(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 12,
+                                        color: selectedtasktype == "Personal"
+                                            ? Color.fromARGB(238, 86, 0, 247)
+                                            : selectedtasktype == "Work"
+                                                ? Colors.lightBlue
+                                                : selectedtasktype == "Health"
+                                                    ? Color.fromARGB(
+                                                        255, 255, 2, 111)
+                                                    : selectedtasktype ==
+                                                            "Social"
+                                                        ? Colors.orange
+                                                        : Colors.black,
+                                      ),
                                     ),
                                     Container(
                                       decoration: const BoxDecoration(
                                         shape: BoxShape.circle,
                                       ),
-                                      padding: EdgeInsets.all(5),
+                                      padding: const EdgeInsets.all(0),
                                       child: Center(
                                         child: DropdownButton<String>(
                                           dropdownColor: const Color.fromARGB(
@@ -458,7 +590,25 @@ class ToDoFormCard {
                                               .map((String items) {
                                             return DropdownMenuItem(
                                               value: items,
-                                              child: Text(items),
+                                              child: Text(
+                                                items,
+                                                style: GoogleFonts.bungee(
+                                                  fontSize: 12,
+                                                  color: items == "Personal"
+                                                      ? Color.fromARGB(
+                                                          238, 86, 0, 247)
+                                                      : items == "Work"
+                                                          ? Colors.lightBlue
+                                                          : items == "Health"
+                                                              ? Colors.pink
+                                                              : items ==
+                                                                      "Social"
+                                                                  ? Colors
+                                                                      .orange
+                                                                  : Colors
+                                                                      .black,
+                                                ),
+                                              ),
                                             );
                                           }).toList(),
                                           onChanged: (value) {
@@ -466,7 +616,7 @@ class ToDoFormCard {
                                               selectedtasktype = value!;
                                             });
                                           },
-                                          underline: SizedBox(),
+                                          underline: const SizedBox(),
                                         ),
                                       ),
                                     ),
@@ -480,10 +630,10 @@ class ToDoFormCard {
                               style: TextButton.styleFrom(
                                   backgroundColor:
                                       const Color.fromARGB(255, 255, 4, 4)),
-                              child: const Text('Reset',
-                                  style: TextStyle(
-                                      color: const Color.fromARGB(
-                                          255, 255, 255, 255))),
+                              child: Text('Reset',
+                                  style: GoogleFonts.bungee(
+                                      color: Color.fromARGB(255, 255, 255, 255),
+                                      fontWeight: FontWeight.w300)),
                               onPressed: () {
                                 setState(() {
                                   selectedDate = DateTime.now();
@@ -498,6 +648,7 @@ class ToDoFormCard {
                               builder: (context, isLoading, _) {
                                 return InkWell(
                                   onTap: () {
+                                    isLoading == true;
                                     print("Edit Form ID: $editdocid");
 
                                     FirebaseService.updatecurrentusertodotask(
@@ -514,7 +665,7 @@ class ToDoFormCard {
                                       if (selectedtasktype != "Personal") {
                                         context
                                             .read<TodotaskProvider>()
-                                            .removeCurrentuser_personal_ToDOTask(
+                                            .removeCurrentuser_personal_ToDOTask_update(
                                                 taskId: docid);
                                       } else {
                                         FirebaseService.gettodotasks()
@@ -534,27 +685,41 @@ class ToDoFormCard {
                                                   currentuserstodotask:
                                                       current_todoIds!);
                                         });
-
-                                        FirebaseService
-                                                .getCurrentUser_personal_todotasks()
-                                            .then(
-                                          (personal_todoIds) {
-                                            context
-                                                .read<TodotaskProvider>()
-                                                .addcurrentuser_personalToDo_task_provider(
-                                                    todotask:
-                                                        personal_todoIds!);
-                                          },
-                                        );
+                                        context
+                                            .read<TodotaskProvider>()
+                                            .get_updated_not_complete_personla_task_LIST(
+                                                taskId: editdocid,
+                                                date: selectedDate,
+                                                description:
+                                                    descriptionFieldController
+                                                        .text
+                                                        .trim(),
+                                                priority: selectedpriority,
+                                                tasktype: selectedtasktype,
+                                                title: titleFieldController.text
+                                                    .trim());
                                       }
-                                      setState(() {
-                                        PersonalTasks obj = new PersonalTasks();
-                                      });
+
+                                      // Navigator.of(contextxx).pop();
+                                      // ScaffoldMessenger.of(context)
+                                      //     .showSnackBar(const SnackBar(
+                                      //   backgroundColor: Colors.deepPurple,
+                                      //   shape: StadiumBorder(),
+                                      //   behavior: SnackBarBehavior.floating,
+                                      //   margin: EdgeInsets.all(20),
+                                      //   content: Text(
+                                      //     "Updated a Task",
+                                      //     style: TextStyle(
+                                      //         fontWeight: FontWeight.w500,
+                                      //         fontSize: 15),
+                                      //   ),
+                                      //   elevation: 12,
+                                      // ));
                                     } else if (pagename == "Work") {
                                       if (selectedtasktype != "Work") {
                                         context
                                             .read<TodotaskProvider>()
-                                            .removeCurrentuser_work_ToDOTask(
+                                            .removeCurrentuser_work_ToDOTask_update(
                                                 taskId: docid);
                                       } else {
                                         FirebaseService.gettodotasks()
@@ -575,26 +740,41 @@ class ToDoFormCard {
                                                       current_todoIds!);
                                         });
 
-                                        FirebaseService
-                                                .getCurrentUser_work_todotasks()
-                                            .then(
-                                          (work_todoIds) {
-                                            context
-                                                .read<TodotaskProvider>()
-                                                .addcurrentuser_workToDo_task_provider(
-                                                    todotask: work_todoIds!);
-                                          },
-                                        );
+                                        context
+                                            .read<TodotaskProvider>()
+                                            .get_updated_not_complete_work_task_LIST(
+                                                taskId: editdocid,
+                                                date: selectedDate,
+                                                description:
+                                                    descriptionFieldController
+                                                        .text
+                                                        .trim(),
+                                                priority: selectedpriority,
+                                                tasktype: selectedtasktype,
+                                                title: titleFieldController.text
+                                                    .trim());
                                       }
 
-                                      setState(() {
-                                        WorkTasks obj = new WorkTasks();
-                                      });
+                                      // Navigator.of(contextxx).pop();
+                                      // ScaffoldMessenger.of(context)
+                                      //     .showSnackBar(const SnackBar(
+                                      //   backgroundColor: Colors.deepPurple,
+                                      //   shape: StadiumBorder(),
+                                      //   behavior: SnackBarBehavior.floating,
+                                      //   margin: EdgeInsets.all(20),
+                                      //   content: Text(
+                                      //     "Updated a Task",
+                                      //     style: TextStyle(
+                                      //         fontWeight: FontWeight.w500,
+                                      //         fontSize: 15),
+                                      //   ),
+                                      //   elevation: 12,
+                                      // ));
                                     } else if (pagename == "Health") {
                                       if (selectedtasktype != "Health") {
                                         context
                                             .read<TodotaskProvider>()
-                                            .removeCurrentuser_health_ToDOTask(
+                                            .removeCurrentuser_health_ToDOTask_update(
                                                 taskId: docid);
                                       } else {
                                         FirebaseService.gettodotasks()
@@ -614,27 +794,41 @@ class ToDoFormCard {
                                                   currentuserstodotask:
                                                       current_todoIds!);
                                         });
-
-                                        FirebaseService
-                                                .getCurrentUser_health_todotasks()
-                                            .then(
-                                          (health_todoIds) {
-                                            context
-                                                .read<TodotaskProvider>()
-                                                .addcurrentuser_healthToDo_task_provider(
-                                                    todotask: health_todoIds!);
-                                          },
-                                        );
+                                        context
+                                            .read<TodotaskProvider>()
+                                            .get_updated_not_complete_health_task_LIST(
+                                                taskId: editdocid,
+                                                date: selectedDate,
+                                                description:
+                                                    descriptionFieldController
+                                                        .text
+                                                        .trim(),
+                                                priority: selectedpriority,
+                                                tasktype: selectedtasktype,
+                                                title: titleFieldController.text
+                                                    .trim());
                                       }
 
-                                      setState(() {
-                                        HealthTasks obj = new HealthTasks();
-                                      });
+                                      // Navigator.of(contextxx).pop();
+                                      // ScaffoldMessenger.of(context)
+                                      //     .showSnackBar(const SnackBar(
+                                      //   backgroundColor: Colors.deepPurple,
+                                      //   shape: StadiumBorder(),
+                                      //   behavior: SnackBarBehavior.floating,
+                                      //   margin: EdgeInsets.all(20),
+                                      //   content: Text(
+                                      //     "Updated a Task",
+                                      //     style: TextStyle(
+                                      //         fontWeight: FontWeight.w500,
+                                      //         fontSize: 15),
+                                      //   ),
+                                      //   elevation: 12,
+                                      // ));
                                     } else if (pagename == "Social") {
                                       if (selectedtasktype != "Social") {
                                         context
                                             .read<TodotaskProvider>()
-                                            .removeCurrentuser_social_ToDOTask(
+                                            .removeCurrentuser_social_ToDOTask_update(
                                                 taskId: docid);
                                       } else {
                                         FirebaseService.gettodotasks()
@@ -654,91 +848,122 @@ class ToDoFormCard {
                                                   currentuserstodotask:
                                                       current_todoIds!);
                                         });
-
-                                        FirebaseService
-                                                .getCurrentUser_social_todotasks()
-                                            .then(
-                                          (social_todoIds) {
-                                            context
-                                                .read<TodotaskProvider>()
-                                                .addcurrentuser_socialToDo_task_provider(
-                                                    todotask: social_todoIds!);
-                                          },
-                                        );
+                                        context
+                                            .read<TodotaskProvider>()
+                                            .get_updated_not_social_task_LIST(
+                                                taskId: editdocid,
+                                                date: selectedDate,
+                                                description:
+                                                    descriptionFieldController
+                                                        .text
+                                                        .trim(),
+                                                priority: selectedpriority,
+                                                tasktype: selectedtasktype,
+                                                title: titleFieldController.text
+                                                    .trim());
                                       }
-                                      setState(() {
-                                        SocialTasks obj = new SocialTasks();
-                                      });
+                                      // Navigator.of(contextxx).pop();
+                                      // ScaffoldMessenger.of(context)
+                                      //     .showSnackBar(const SnackBar(
+                                      //   backgroundColor: Colors.deepPurple,
+                                      //   shape: StadiumBorder(),
+                                      //   behavior: SnackBarBehavior.floating,
+                                      //   margin: EdgeInsets.all(20),
+                                      //   content: Text(
+                                      //     "Updated a Task",
+                                      //     style: TextStyle(
+                                      //         fontWeight: FontWeight.w500,
+                                      //         fontSize: 15),
+                                      //   ),
+                                      //   elevation: 12,
+                                      // ));
                                     }
 
-                                    Navigator.of(context).pop();
-                                    ScaffoldMessenger.of(contextxx)
-                                        .showSnackBar(const SnackBar(
-                                      backgroundColor: Colors.deepPurple,
-                                      shape: StadiumBorder(),
-                                      behavior: SnackBarBehavior.floating,
-                                      margin: EdgeInsets.all(20),
-                                      content: Text(
-                                        "Update a Task",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 15),
+                                    Navigator.of(contextxx).pop();
+                                    Flushbar(
+                                      message: "Updated a Task",
+                                      icon: Icon(
+                                        Icons.update,
+                                        size: 28.0,
+                                        color:
+                                            Color.fromARGB(255, 217, 38, 241),
                                       ),
-                                      elevation: 12,
-                                    ));
+                                      margin: EdgeInsets.all(6.0),
+                                      flushbarStyle: FlushbarStyle.FLOATING,
+                                      flushbarPosition: FlushbarPosition.BOTTOM,
+                                      textDirection: Directionality.of(context),
+                                      borderRadius: BorderRadius.circular(12),
+                                      duration: Duration(seconds: 3),
+                                      leftBarIndicatorColor:
+                                          Color.fromARGB(255, 217, 38, 241),
+                                    ).show(context);
+                                    // ScaffoldMessenger.of(context)
+                                    //     .showSnackBar(const SnackBar(
+                                    //   backgroundColor: Colors.deepPurple,
+                                    //   shape: StadiumBorder(),
+                                    //   behavior: SnackBarBehavior.floating,
+                                    //   margin: EdgeInsets.all(20),
+                                    //   content: Text(
+                                    //     "Updated a Task",
+                                    //     style: TextStyle(
+                                    //         fontWeight: FontWeight.w500,
+                                    //         fontSize: 15),
+                                    //   ),
+                                    //   elevation: 12,
+                                    // ));
                                   },
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 10, horizontal: 10),
-                                    child: Container(
-                                      width: 100,
-                                      height: 42,
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(100),
-                                        color: const Color.fromARGB(
-                                            215, 27, 255, 107),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 0,
-                                            right: 0,
-                                            top: 5,
-                                            bottom: 5),
-                                        child: isLoading
-                                            ? const SizedBox(
-                                                width: 15,
-                                                height: 15,
-                                                child: Center(
-                                                  child:
-                                                      CircularProgressIndicator(),
-                                                ),
-                                              )
-                                            : const Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    "Submit",
-                                                    style: const TextStyle(
-                                                      fontSize: 15,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      color: Color.fromARGB(
-                                                          255, 14, 14, 14),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                      ),
+                                  child:
+                                      // Padding(
+                                      //   padding: const EdgeInsets.symmetric(
+                                      //       vertical: 10, horizontal: 10),
+                                      //   child:
+                                      Container(
+                                    width: 100,
+                                    height: 42,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(100),
+                                      color: const Color.fromARGB(
+                                          215, 27, 255, 107),
                                     ),
+                                    // child: Padding(
+                                    //   padding: const EdgeInsets.only(
+                                    //       left: 0,
+                                    //       right: 0,
+                                    //       top: 5,
+                                    //       bottom: 5),
+                                    child: isLoading
+                                        ? const SizedBox(
+                                            width: 15,
+                                            height: 15,
+                                            child: Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            ),
+                                          )
+                                        : Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                "Update",
+                                                style: GoogleFonts.bungee(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w300,
+                                                  color: Color.fromARGB(
+                                                      255, 14, 14, 14),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                   ),
+                                  // ),
+                                  // ),
                                 );
                               },
                             )
                           ],
                         )
-                  //-------------------------Update------------------------------
+                  //-------------------------Update-Form-----------------------------
                   ),
             );
           },
@@ -802,7 +1027,7 @@ class _CardTextFieldState extends State<CardTextField> {
               fillColor:
                   const Color.fromARGB(255, 130, 130, 127).withOpacity(0.1),
               labelText: widget.textFieldValue,
-              labelStyle: const TextStyle(fontSize: 13),
+              labelStyle: GoogleFonts.bungee(fontSize: 10),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
                 borderSide: const BorderSide(color: Colors.black, width: 1),
@@ -816,7 +1041,7 @@ class _CardTextFieldState extends State<CardTextField> {
             padding: const EdgeInsets.only(top: 5, left: 5),
             child: Text(
               "$_charCount / $_maxLength",
-              style: const TextStyle(fontSize: 12, color: Colors.grey),
+              style: GoogleFonts.bungee(fontSize: 10, color: Colors.grey),
             ),
           ),
         ],

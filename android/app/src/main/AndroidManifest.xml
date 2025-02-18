@@ -1,6 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET" />
     <application
-        android:label="smart_to_do_app"
+        android:label="RemiX"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

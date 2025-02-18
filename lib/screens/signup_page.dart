@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_to_do_app/main.dart';
 import 'package:smart_to_do_app/screens/login_page.dart';
 import 'package:smart_to_do_app/services/firebase_auth_service.dart';
@@ -37,11 +38,12 @@ class _SignupPage extends State<SignupPage> {
               Stack(
                 children: [
                   Container(
-                    height: 300,
+                    height: 200,
+                    width: double.infinity,
                     child: Opacity(
                       opacity: 0.6,
-                      child: Image.network(
-                        'https://images.pexels.com/photos/7841844/pexels-photo-7841844.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+                      child: Image.asset(
+                        'assets/register.jpg',
                         fit: BoxFit.fill,
                       ),
                     ),
@@ -50,7 +52,7 @@ class _SignupPage extends State<SignupPage> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       const SizedBox(
-                        height: 30,
+                        height: 150,
                       ),
                       Container(
                         decoration: const BoxDecoration(
@@ -60,31 +62,31 @@ class _SignupPage extends State<SignupPage> {
                             color: Colors.white),
                         child: Column(
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 30),
-                              child: Container(
-                                  width: 150,
-                                  height: 150,
-                                  decoration: const BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    image: DecorationImage(
-                                      image: AssetImage('assets/profile.png'),
-                                      fit: BoxFit.cover,
-                                    ),
-                                  )),
-                            ),
+                            // Padding(
+                            //   padding: const EdgeInsets.only(top: 30),
+                            //   child: Container(
+                            //       width: 150,
+                            //       height: 150,
+                            //       decoration: const BoxDecoration(
+                            //         shape: BoxShape.circle,
+                            //         image: DecorationImage(
+                            //           image: AssetImage('assets/profile.png'),
+                            //           fit: BoxFit.cover,
+                            //         ),
+                            //       )),
+                            // ),
                             const SizedBox(
-                              height: 15,
+                              height: 35,
                             ),
-                            const Text(
+                            Text(
                               "Register",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w500),
+                              style: GoogleFonts.monda(
+                                  color: Color.fromARGB(255, 217, 38, 241),
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w700),
                             ),
                             const SizedBox(
-                              height: 5,
+                              height: 20,
                             ),
                             custom_textfield(
                               textfieldvalue: "Name",
@@ -261,24 +263,46 @@ class _SignupPage extends State<SignupPage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Text(
-                                  "Already have acccount ? ",
-                                  style: TextStyle(fontSize: 15),
+                                Text(
+                                  "Already have acccount ?   ",
+                                  style: GoogleFonts.viga(fontSize: 15),
                                 ),
                                 InkWell(
-                                    onTap: () {
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  LoginPage()));
-                                    },
-                                    child: const Text(
-                                      "Login",
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        decoration: TextDecoration.underline,
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      PageRouteBuilder(
+                                        pageBuilder: (contextpassed, animation,
+                                                persnalAnimation) =>
+                                            LoginPage(),
+                                        transitionsBuilder: (contextpassed,
+                                            animation,
+                                            persnalAnimation,
+                                            child) {
+                                          return FadeTransition(
+                                              opacity: animation, child: child);
+                                        },
                                       ),
-                                    ))
+                                    );
+                                  },
+                                  child: Container(
+                                      width: 65,
+                                      height: 30,
+                                      decoration: BoxDecoration(
+                                          color:
+                                              Color.fromARGB(255, 217, 38, 241),
+                                          borderRadius:
+                                              BorderRadius.circular(100)),
+                                      child: Center(
+                                          child: Text(
+                                        "Log In",
+                                        style: GoogleFonts.viga(
+                                            color: Color.fromARGB(
+                                                255, 255, 255, 255),
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w500),
+                                      ))),
+                                )
                               ],
                             ),
                             const SizedBox(

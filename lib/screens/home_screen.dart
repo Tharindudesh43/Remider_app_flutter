@@ -12,6 +12,7 @@ import 'package:smart_to_do_app/screens/work_tasks.dart';
 import 'package:smart_to_do_app/services/firebase_service.dart';
 import 'package:smart_to_do_app/widgets/profile_card.dart';
 import 'package:smart_to_do_app/widgets/to_do_form_card.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class MyApp extends StatefulWidget {
   @override
@@ -59,8 +60,36 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
 
+    FirebaseService.get_level_of_work_tasks().then((value) {
+      print("work: $value");
+      context
+          .read<TodotaskProvider>()
+          .add_level_of_compeletion_work_tasks(value: value!);
+    });
+
+    FirebaseService.get_level_of_health_tasks().then((value) {
+      print("health: $value");
+      context
+          .read<TodotaskProvider>()
+          .add_level_of_compeletion_health_tasks(value: value!);
+    });
+
+    FirebaseService.get_level_of_social_tasks().then((value) {
+      print("social: $value");
+      context
+          .read<TodotaskProvider>()
+          .add_level_of_compeletion_social_tasks(value: value!);
+    });
+
     FirebaseService.get_level_of_complete().then((value) {
       context.read<TodotaskProvider>().add_level_of_complete(value: value);
+    });
+
+    FirebaseService.get_level_of_personal_tasks().then((value) {
+      print("personal: $value");
+      context
+          .read<TodotaskProvider>()
+          .add_level_of_compeletion_personal_tasks(value: value!);
     });
 
     _scrollController.addListener(() {
@@ -90,15 +119,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
     String? username;
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       appBar: _isVisible
           ? AppBar(
-              toolbarHeight: 82,
+              automaticallyImplyLeading: false,
+              toolbarHeight: 90, //for_mobile:65 //for_emulator:90
               backgroundColor: Colors.white,
               flexibleSpace: Padding(
-                padding: const EdgeInsets.only(top: 35, left: 20),
+                padding: const EdgeInsets.only(
+                    top: 45, left: 18), //for_op_em:45 //55
                 child: Column(
                   children: [
                     Row(
@@ -107,20 +139,30 @@ class _HomeScreenState extends State<HomeScreen> {
                             builder: (context, hotels, child) {
                           username = hotels.username;
                           return username!.isEmpty
-                              ? const Text(
+                              ? Text(
                                   "Hey, ",
-                                  style: TextStyle(
+                                  style: GoogleFonts.permanentMarker(
                                     color: Color.fromARGB(255, 0, 0, 0),
                                     fontWeight: FontWeight.w900,
-                                    fontSize: 33,
+                                    fontSize: 26,
                                   ),
                                 )
                               : Text(
-                                  "Hey, $username",
-                                  style: const TextStyle(
+                                  () {
+                                    List<String> nameParts =
+                                        username!.split(" ");
+                                    int halfLength =
+                                        (nameParts.length / 2).ceil();
+                                    String firstHalf =
+                                        nameParts.take(halfLength).join(" ");
+                                    return firstHalf.length > 20
+                                        ? "Hey, ${nameParts[0].substring(0, 10)}.."
+                                        : "Hey, $firstHalf";
+                                  }(),
+                                  style: GoogleFonts.permanentMarker(
                                     color: Color.fromARGB(255, 0, 0, 0),
-                                    fontWeight: FontWeight.w900,
-                                    fontSize: 33,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 26,
                                   ),
                                 );
                         }),
@@ -130,7 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         Text(
                           "Let's make this day productive",
-                          style: TextStyle(
+                          style: GoogleFonts.geologica(
                               color: const Color.fromARGB(255, 0, 0, 0)
                                   .withOpacity(0.5),
                               fontSize: 16),
@@ -149,8 +191,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       obj.DialogCard(contextxx: context, username: username!);
                     },
                     child: Container(
-                        width: 40,
-                        height: 40,
+                        width: 40, //for_em:35
+                        height: 40, //for_em:35
                         decoration: const BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(10)),
                           image: DecorationImage(
@@ -167,8 +209,8 @@ class _HomeScreenState extends State<HomeScreen> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Padding(
-            padding:
-                const EdgeInsets.only(left: 20, right: 20, top: 25, bottom: 20),
+            padding: const EdgeInsets.only(
+                left: 20, right: 20, top: 15, bottom: 20), //top_for_emu:20 //10
             child: Container(
               height: 200,
               decoration: const BoxDecoration(
@@ -179,7 +221,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Container(
                     width: double.infinity,
-                    height: 208,
+                    height: 215,
                     decoration: BoxDecoration(
                       borderRadius: const BorderRadius.all(Radius.circular(10)),
                       image: DecorationImage(
@@ -224,29 +266,28 @@ class _HomeScreenState extends State<HomeScreen> {
                             (100 / completed_tasks) * all_tasks;
 
                         if (level_of_completion_precentage >= 80.00) {
-                          title_one = "Hurrah";
+                          title_one = "Hurrah !";
                           title_two = "You are almost there";
                         } else if (level_of_completion_precentage <= 30.00) {
-                          title_one = "Come on!";
+                          title_one = "Come on !";
                           title_two = "You have more to do";
                         } else if (level_of_completion_precentage == 50.00) {
-                          title_one = "Nice!";
+                          title_one = "Nice !";
                           title_two = "You are done half";
                         } else if (level_of_completion_precentage > 30.00 &&
                             level_of_completion_precentage < 49.00) {
-                          title_one = "Steady move!!";
+                          title_one = "Steady move !!";
                           title_two = "Good move, but focus on";
                         } else if (level_of_completion_precentage == 100.00) {
                           title_one = "Congratulations!";
                           title_two = "You have completed all tasks.";
                         } else if (level_of_completion_precentage == 0.00) {
-                          title_one = "Start!";
+                          title_one = "Start !";
                           title_two = "Ok, let's work on";
                         } else if (level_of_completion_precentage > 50.00 &&
                             level_of_completion_precentage < 80.00) {
-                          title_one = "Well Done!";
-                          title_two =
-                              "You are already on the track, \nso run now";
+                          title_one = "Well Done !";
+                          title_two = "You are already on the track.";
                         }
                       }
                     }
@@ -261,11 +302,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                   children: [
                                     Text(
                                       "None",
-                                      style: TextStyle(
+                                      style: GoogleFonts.geologica(
                                           fontSize: 26,
                                           fontWeight: FontWeight.w700,
-                                          color: const Color.fromARGB(
-                                              255, 104, 18, 179)),
+                                          color:
+                                              Color.fromARGB(255, 0, 17, 255)),
                                     ),
                                   ],
                                 ),
@@ -273,11 +314,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                   children: [
                                     Text(
                                       "None",
-                                      style: TextStyle(
+                                      style: GoogleFonts.geologica(
                                           fontSize: 18,
                                           fontWeight: FontWeight.w700,
-                                          color: const Color.fromARGB(
-                                              255, 104, 18, 179)),
+                                          color:
+                                              Color.fromARGB(255, 0, 17, 255)),
                                     ),
                                   ],
                                 ),
@@ -286,10 +327,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                   children: [
                                     Text(
                                       "0 out of 0 tasks are completed",
-                                      style: TextStyle(
+                                      style: GoogleFonts.geologica(
                                           fontSize: 11,
                                           fontWeight: FontWeight.w700,
-                                          color: Colors.pink),
+                                          color:
+                                              Color.fromARGB(255, 0, 17, 255)),
                                     ),
                                   ],
                                 ),
@@ -308,8 +350,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                               backgroundColor:
                                                   Colors.pink.shade100,
                                               valueColor:
-                                                  AlwaysStoppedAnimation<Color>(
-                                                      Colors.pink),
+                                                  const AlwaysStoppedAnimation<
+                                                      Color>(Colors.pink),
                                             ),
                                           ),
                                         ))
@@ -327,11 +369,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                   children: [
                                     Text(
                                       "$title_one",
-                                      style: TextStyle(
-                                          fontSize: 26,
-                                          fontWeight: FontWeight.w700,
-                                          color: const Color.fromARGB(
-                                              255, 104, 18, 179)),
+                                      style: GoogleFonts.bangers(
+                                          fontSize: 23,
+                                          fontWeight: FontWeight.w300,
+                                          color:
+                                              Color.fromARGB(255, 0, 17, 255)),
                                     ),
                                   ],
                                 ),
@@ -339,23 +381,24 @@ class _HomeScreenState extends State<HomeScreen> {
                                   children: [
                                     Text(
                                       "$title_two",
-                                      style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w700,
-                                          color: const Color.fromARGB(
-                                              255, 104, 18, 179)),
+                                      style: GoogleFonts.geologica(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600,
+                                          color:
+                                              Color.fromARGB(255, 0, 17, 255)),
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 60),
+                                const SizedBox(height: 75),
                                 Row(
                                   children: [
                                     Text(
                                       "${all_tasks!} out of ${completed_tasks!} tasks are completed",
-                                      style: TextStyle(
+                                      style: GoogleFonts.geologica(
                                           fontSize: 11,
-                                          fontWeight: FontWeight.w700,
-                                          color: Colors.pink),
+                                          fontWeight: FontWeight.w600,
+                                          color:
+                                              Color.fromARGB(255, 0, 38, 255)),
                                     ),
                                   ],
                                 ),
@@ -370,14 +413,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                             borderRadius:
                                                 BorderRadius.circular(10),
                                             child: LinearProgressIndicator(
-                                              value:
-                                                  level_of_completion_precentage /
+                                              value: level_of_completion_precentage ==
+                                                      "NaN"
+                                                  ? 0
+                                                  : level_of_completion_precentage /
                                                       100,
-                                              backgroundColor:
-                                                  Colors.pink.shade100,
+                                              backgroundColor: Color.fromARGB(
+                                                      255, 0, 38, 255)
+                                                  .withOpacity(0.3),
                                               valueColor:
-                                                  AlwaysStoppedAnimation<Color>(
-                                                      Colors.pink),
+                                                  const AlwaysStoppedAnimation<
+                                                          Color>(
+                                                      Color.fromARGB(
+                                                          255, 0, 38, 255)),
                                             ),
                                           ),
                                         ))
@@ -397,49 +445,84 @@ class _HomeScreenState extends State<HomeScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.only(left: 25, bottom: 20),
+                padding: const EdgeInsets.only(
+                    left: 25, bottom: 25, top: 5), //bottom_em:20
                 child: Text(
                   "Progress of Tasks",
-                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.w900),
+                  style: GoogleFonts.daysOne(
+                      fontSize: 25, fontWeight: FontWeight.w500),
                 ),
               ),
             ],
           ),
           Expanded(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 25.0,
-                    crossAxisSpacing: 25.0,
-                  ),
-                  itemCount: 4,
-                  itemBuilder: (context, index) {
-                    String tasktypepassing = "";
-                    Color themecolor = Colors.black;
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Consumer<TodotaskProvider>(
+                    builder: (context, todotasks, child) {
+                  List<dynamic> level_personal_tasks =
+                      todotasks.level_of_completion_of_personal_tasks;
+                  List<dynamic> level_work_tasks =
+                      todotasks.level_of_completion_of_work_tasks;
+                  List<dynamic> level_health_tasks =
+                      todotasks.level_of_completion_of_health_tasks;
+                  List<dynamic> level_social_tasks =
+                      todotasks.level_of_completion_of_social_tasks;
+                  return GridView.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 25.0,
+                        crossAxisSpacing: 25.0,
+                      ),
+                      itemCount: 4,
+                      itemBuilder: (context, index) {
+                        String tasktypepassing = "";
+                        Color themecolor = Colors.black;
 
-                    if (index == 0) {
-                      tasktypepassing = "Personal";
-                      themecolor = const Color.fromARGB(238, 86, 0, 247);
-                    } else if (index == 1) {
-                      tasktypepassing = "Work";
-                      themecolor = Colors.lightBlue;
-                    } else if (index == 2) {
-                      tasktypepassing = "Health";
-                      themecolor = const Color.fromARGB(255, 255, 2, 111);
-                    } else if (index == 3) {
-                      tasktypepassing = "Social";
-                      themecolor = Colors.orange;
-                    }
-                    return gridcontainer(
-                      contextpassed: context,
-                      indextype: index,
-                      tasktype: tasktypepassing,
-                      themecolor: themecolor,
-                    );
-                  }),
-            ),
+                        if (index == 0) {
+                          tasktypepassing = "Personal";
+                          themecolor = const Color.fromARGB(238, 86, 0, 247);
+                          return gridcontainer(
+                            personal_task_level: level_personal_tasks,
+                            contextpassed: context,
+                            indextype: index,
+                            tasktype: tasktypepassing,
+                            themecolor: themecolor,
+                          );
+                        } else if (index == 1) {
+                          tasktypepassing = "Work";
+                          themecolor = Colors.lightBlue;
+                          return gridcontainer(
+                            personal_task_level: level_work_tasks,
+                            contextpassed: context,
+                            indextype: index,
+                            tasktype: tasktypepassing,
+                            themecolor: themecolor,
+                          );
+                        } else if (index == 2) {
+                          tasktypepassing = "Health";
+                          themecolor = const Color.fromARGB(255, 255, 2, 111);
+                          return gridcontainer(
+                            personal_task_level: level_health_tasks,
+                            contextpassed: context,
+                            indextype: index,
+                            tasktype: tasktypepassing,
+                            themecolor: themecolor,
+                          );
+                        } else if (index == 3) {
+                          tasktypepassing = "Social";
+                          themecolor = Colors.orange;
+                          return gridcontainer(
+                            personal_task_level: level_social_tasks,
+                            contextpassed: context,
+                            indextype: index,
+                            tasktype: tasktypepassing,
+                            themecolor: themecolor,
+                          );
+                        }
+                      });
+                })),
           ),
         ],
       ),
@@ -451,8 +534,8 @@ class _HomeScreenState extends State<HomeScreen> {
           duration: const Duration(milliseconds: 300),
           opacity: _isVisible ? 1.0 : 0.0,
           child: FloatingActionButton(
-            hoverColor: Colors.white,
-            backgroundColor: Color.fromARGB(255, 221, 187, 219),
+            hoverColor: const Color.fromARGB(255, 255, 255, 255),
+            backgroundColor: Color.fromARGB(255, 0, 17, 255),
             onPressed: () {
               ToDoFormCard obj = ToDoFormCard();
               obj.DialogCard(
@@ -465,11 +548,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   titleController: "",
                   datepassed: Timestamp.now(),
                   prioritypassed: 'Not Priority');
-                  setState(() {
-                    HomeScreen obj = HomeScreen();
-                  });
             },
-            child: const Icon(Icons.add),
+            child: const Icon(
+              Icons.add,
+              color: Colors.white,
+              size: 30,
+              weight: 100,
+            ),
           ),
         ),
       ),
@@ -482,7 +567,9 @@ class gridcontainer extends StatefulWidget {
   BuildContext contextpassed;
   Color themecolor;
   int indextype;
+  List<dynamic> personal_task_level;
   gridcontainer({
+    required this.personal_task_level,
     required this.contextpassed,
     required this.themecolor,
     required this.indextype,
@@ -501,8 +588,8 @@ class _gridcontainerState extends State<gridcontainer> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          const BoxShadow(
+        boxShadow: const [
+          BoxShadow(
             color: Colors.black26,
             blurRadius: 5, //5,
             offset: Offset(0, 0), //Offset(3, 3)
@@ -511,32 +598,75 @@ class _gridcontainerState extends State<gridcontainer> {
       ),
       child: InkWell(
         onTap: () {
-          print("object");
           setState(() {
             if (widget.indextype == 0) {
-              Navigator.pushAndRemoveUntil(
+              Navigator.push(
                 contextpassed,
-                MaterialPageRoute(builder: (contextpassed) => PersonalTasks()),
-                (Route<dynamic> route) => false,
-              );
+                PageRouteBuilder(
+                  pageBuilder: (contextpassed, animation, persnalAnimation) =>
+                      PersonalTasks(),
+                  transitionsBuilder:
+                      (contextpassed, animation, persnalAnimation, child) {
+                    return FadeTransition(opacity: animation, child: child);
+                  },
+                ),
+              ).then((value) {
+                Navigator.push(
+                  contextpassed,
+                  MaterialPageRoute(builder: (context) => HomeScreen()),
+                );
+              });
             } else if (widget.indextype == 1) {
-              Navigator.pushAndRemoveUntil(
+              Navigator.push(
                 contextpassed,
-                MaterialPageRoute(builder: (contextpassed) => WorkTasks()),
-                (Route<dynamic> route) => false,
-              );
+                PageRouteBuilder(
+                  pageBuilder: (contextpassed, animation, persnalAnimation) =>
+                      WorkTasks(),
+                  transitionsBuilder:
+                      (contextpassed, animation, persnalAnimation, child) {
+                    return FadeTransition(opacity: animation, child: child);
+                  },
+                ),
+              ).then((value) {
+                Navigator.push(
+                  contextpassed,
+                  MaterialPageRoute(builder: (context) => HomeScreen()),
+                );
+              });
             } else if (widget.indextype == 2) {
-              Navigator.pushAndRemoveUntil(
+              Navigator.push(
                 contextpassed,
-                MaterialPageRoute(builder: (contextpassed) => HealthTasks()),
-                (Route<dynamic> route) => false,
-              );
+                PageRouteBuilder(
+                  pageBuilder: (contextpassed, animation, persnalAnimation) =>
+                      HealthTasks(),
+                  transitionsBuilder:
+                      (contextpassed, animation, persnalAnimation, child) {
+                    return FadeTransition(opacity: animation, child: child);
+                  },
+                ),
+              ).then((value) {
+                Navigator.push(
+                  contextpassed,
+                  MaterialPageRoute(builder: (context) => HomeScreen()),
+                );
+              });
             } else if (widget.indextype == 3) {
-              Navigator.pushAndRemoveUntil(
+              Navigator.push(
                 contextpassed,
-                MaterialPageRoute(builder: (contextpassed) => SocialTasks()),
-                (Route<dynamic> route) => false,
-              );
+                PageRouteBuilder(
+                  pageBuilder: (contextpassed, animation, persnalAnimation) =>
+                      SocialTasks(),
+                  transitionsBuilder:
+                      (contextpassed, animation, persnalAnimation, child) {
+                    return FadeTransition(opacity: animation, child: child);
+                  },
+                ),
+              ).then((value) {
+                Navigator.push(
+                  contextpassed,
+                  MaterialPageRoute(builder: (context) => HomeScreen()),
+                );
+              });
             }
           });
         },
@@ -550,26 +680,66 @@ class _gridcontainerState extends State<gridcontainer> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Container(
-                      height: 35,
-                      width: 35,
+                      height: 36,
+                      width: 36,
                       child: Stack(alignment: Alignment.center, children: [
-                        CircularProgressIndicator.adaptive(
-                          value: 1,
-                          backgroundColor: Colors.grey.shade200,
-                          valueColor:
-                              AlwaysStoppedAnimation<Color?>(widget.themecolor),
-                        ),
-                        // Center(
-                        //     child: Text(
-                        //   '70%',
-                        //   style: TextStyle(
-                        //       fontSize: 10,
-                        //       fontWeight: FontWeight.bold,
-                        //       color: widget.themecolor),
-                        // )),
+                        widget.personal_task_level.isEmpty
+                            ? CircularProgressIndicator.adaptive(
+                                value: 0.0,
+                                backgroundColor: Colors.grey.shade200,
+                                valueColor: AlwaysStoppedAnimation<Color?>(
+                                    widget.themecolor),
+                              )
+                            : CircularProgressIndicator.adaptive(
+                                value: () {
+                                  if (widget.personal_task_level[0] == 0)
+                                    return 0.0;
+                                  double percentage =
+                                      widget.personal_task_level[1]! /
+                                          widget.personal_task_level[0];
+                                  return percentage.isNaN
+                                      ? 0.0
+                                      : percentage.clamp(0.0, 1.0);
+                                }(),
+                                backgroundColor: Colors.grey.shade200,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                    widget.themecolor),
+                              ),
+                        widget.personal_task_level.isEmpty
+                            ? Center(
+                                child: Text(
+                                "0 %",
+                                style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w600,
+                                    color: widget.themecolor),
+                              ))
+                            : Center(
+                                child: Text(
+                                () {
+                                  double precentage =
+                                      ((widget.personal_task_level[1]! /
+                                              widget.personal_task_level[0]) *
+                                          100);
+                                  String formatted =
+                                      precentage.toStringAsFixed(2);
+                                  formatted =
+                                      formatted.replaceAll(RegExp(r'0+$'), '');
+                                  formatted =
+                                      formatted.replaceAll(RegExp(r'\.$'), '');
+
+                                  return formatted == "NaN"
+                                      ? "0 %"
+                                      : "${formatted.toString()}%";
+                                }(),
+                                style: TextStyle(
+                                    fontSize: 8.5,
+                                    fontWeight: FontWeight.bold,
+                                    color: widget.themecolor),
+                              )),
                       ]),
                     ),
-                    Container(
+                    const SizedBox(
                       height: 0,
                       width: 00,
                     ),
@@ -592,88 +762,100 @@ class _gridcontainerState extends State<gridcontainer> {
                 children: [
                   Text(
                     widget.tasktype,
-                    style: TextStyle(
+                    style: GoogleFonts.secularOne(
                       fontSize: 24,
-                      fontWeight: FontWeight.w700,
-                      color: const Color.fromARGB(255, 0, 0, 0),
+                      fontWeight: FontWeight.w500,
+                      color: widget.themecolor,
                     ),
                   ),
                 ],
               ),
-              // Row(
-              //   children: [
-              //     Text(
-              //       "10 tasks",
-              //       style: TextStyle(
-              //           fontSize: 14,
-              //           color: Colors.black.withOpacity(0.3),
-              //           fontWeight: FontWeight.w700),
-              //     ),
-              //   ],
-              // ),
-              SizedBox(
+              Row(
+                children: [
+                  widget.personal_task_level.isEmpty
+                      ? Text(
+                          "0 tasks",
+                          style: GoogleFonts.secularOne(
+                              fontSize: 14,
+                              color: Colors.black.withOpacity(0.3),
+                              fontWeight: FontWeight.w700),
+                        )
+                      : Text(
+                          "${widget.personal_task_level[0].toString()!} tasks",
+                          style: GoogleFonts.secularOne(
+                              fontSize: 14,
+                              color: Colors.black.withOpacity(0.3),
+                              fontWeight: FontWeight.w700),
+                        ),
+                ],
+              ),
+              const SizedBox(
                 height: 20,
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 20),
-                child: Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 10),
-                      child: Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: widget.themecolor.withOpacity(0.2)),
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              left: 10, right: 10, top: 5, bottom: 5),
-                          child: Row(
-                            children: [
-                              Text(
-                                "Include ",
-                                style: TextStyle(
-                                    fontSize: 8,
-                                    fontWeight: FontWeight.w700,
-                                    color: widget.themecolor),
-                              ),
-                              Text("Your all tasks by type",
-                                  style: TextStyle(
-                                      fontSize: 8,
-                                      fontWeight: FontWeight.w700,
-                                      color: widget.themecolor))
-                            ],
-                          ),
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 10),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: widget.themecolor.withOpacity(0.2)),
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            left: 10, right: 10, top: 5, bottom: 5),
+                        child: Row(
+                          children: [
+                            widget.personal_task_level.isEmpty
+                                ? Text("0 Completed",
+                                    style: TextStyle(
+                                        fontSize: 8,
+                                        fontWeight: FontWeight.w700,
+                                        color: widget.themecolor))
+                                : Text(
+                                    "${widget.personal_task_level[1].toString()!} Completed",
+                                    style: TextStyle(
+                                        fontSize: 8,
+                                        fontWeight: FontWeight.w700,
+                                        color: widget.themecolor))
+                          ],
                         ),
                       ),
                     ),
-
-                    // Container(
-                    //   decoration: BoxDecoration(
-                    //       borderRadius: BorderRadius.circular(20),
-                    //       color: Colors.red.withOpacity(0.2)),
-                    //   child: Padding(
-                    //     padding: const EdgeInsets.only(
-                    //         left: 10, right: 10, top: 5, bottom: 5),
-                    //     child: Row(
-                    //       children: [
-                    //         Text(
-                    //           "2 ",
-                    //           style: TextStyle(
-                    //               fontSize: 9,
-                    //               fontWeight: FontWeight.w700,
-                    //               color: Colors.red),
-                    //         ),
-                    //         Text("left",
-                    //             style: TextStyle(
-                    //                 fontSize: 9,
-                    //                 fontWeight: FontWeight.w700,
-                    //                 color: Colors.red))
-                    //       ],
-                    //     ),
-                    //   ),
-                    // ),
-                  ],
-                ),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Colors.red.withOpacity(0.2)),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 10, right: 10, top: 5, bottom: 5),
+                      child: Row(
+                        children: [
+                          widget.personal_task_level.isEmpty
+                              ? const Text(
+                                  "0",
+                                  style: TextStyle(
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.red),
+                                )
+                              : Text(
+                                  widget.personal_task_level[2].toString()!,
+                                  style: const TextStyle(
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.red),
+                                ),
+                          const Text(" left",
+                              style: TextStyle(
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.red))
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

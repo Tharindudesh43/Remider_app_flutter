@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class CustomButton extends StatelessWidget {
   late String btntype;
@@ -30,7 +31,7 @@ class CustomButton extends StatelessWidget {
                     color: const Color.fromARGB(98, 255, 255, 255)),
                 child: Padding(
                     padding: const EdgeInsets.only(
-                        left: 0, right: 0, top: 15, bottom: 15),
+                        left: 0, right: 0, top: 14, bottom: 14),
                     child: isloadinggoogle!
                         ? const SizedBox(
                             width: 20,
@@ -46,8 +47,7 @@ class CustomButton extends StatelessWidget {
                               Container(
                                 width: 20,
                                 height: 20,
-                                child: Image.network(
-                                    "https://cdn.iconscout.com/icon/free/png-512/free-google-logo-icon-download-in-svg-png-gif-file-formats--brands-pack-logos-icons-189824.png?f=webp&w=256"),
+                                child: Image.asset("assets/google_icon.jpg"),
                               ),
                               const SizedBox(
                                 width: 10,
@@ -56,8 +56,8 @@ class CustomButton extends StatelessWidget {
                                 selecter == 1
                                     ? "LOG IN with Google"
                                     : "SIGN UP with Google",
-                                style: const TextStyle(
-                                  fontSize: 17,
+                                style: GoogleFonts.viga(
+                                  fontSize: 15,
                                   fontWeight: FontWeight.w600,
                                   color: Color.fromARGB(255, 14, 14, 14),
                                 ),
@@ -73,7 +73,7 @@ class CustomButton extends StatelessWidget {
               child: Container(
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(100),
-                    color: Colors.amber),
+                    color: const Color.fromARGB(255, 217, 38, 241)),
                 child: Padding(
                   padding: const EdgeInsets.only(
                       left: 90, right: 90, top: 15, bottom: 15),
@@ -87,10 +87,10 @@ class CustomButton extends StatelessWidget {
                         )
                       : Text(
                           btnText,
-                          style: const TextStyle(
+                          style: GoogleFonts.viga(
                             fontSize: 17,
                             fontWeight: FontWeight.w600,
-                            color: Color.fromARGB(255, 14, 14, 14),
+                            color: Color.fromARGB(255, 255, 255, 255),
                           ),
                         ),
                 ),
